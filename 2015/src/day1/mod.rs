@@ -1,6 +1,8 @@
-pub struct Solution();
-
-pub const INPUT: &[u8] = std::include_bytes!("input");
+pub const SOLUTION: common::Solution = common::Solution {
+    name: "Day 1: Not Quite Lisp",
+    input: std::include_bytes!("input"),
+    solve: self::solve,
+};
 
 pub fn solve(input: &[u8]) -> (String, String) {
     let mut floor: isize = 0;
