@@ -7,6 +7,7 @@ name = "advent_of_code"
 version = "0.1.0"
 dependencies = [
  "clap",
+ "common",
  "solutions_2015",
 ]
 
@@ -63,6 +64,10 @@ checksum = "0d4198f73e42b4936b35b5bb248d81d2b595ecb170da0bac7655c54eedfa8da8"
 dependencies = [
  "os_str_bytes",
 ]
+
+[[package]]
+name = "common"
+version = "0.1.0"
 
 [[package]]
 name = "heck"
@@ -142,6 +147,9 @@ dependencies = [
 [[package]]
 name = "solutions_2015"
 version = "0.1.0"
+dependencies = [
+ "common",
+]
 
 [[package]]
 name = "strsim"
