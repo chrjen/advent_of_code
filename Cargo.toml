@@ -8,4 +8,5 @@ edition = "2021"
 [dependencies]
 clap = { version = "4", features = ["derive"] }
 common = { path = "common" }
+crossterm = "0.25"
 solutions_2015 = { path = "2015" }
