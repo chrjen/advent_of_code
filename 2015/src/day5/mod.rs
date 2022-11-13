@@ -81,10 +81,8 @@ pub fn solve(input: &[u8]) -> (String, String) {
 
         // Post-loop. Handling last characters.
         {
-            if !skip {
-                if !map.insert((prev2, prev)) {
-                    pair = true;
-                }
+            if !skip && !map.insert((prev2, prev)) {
+                pair = true;
             }
         }
 

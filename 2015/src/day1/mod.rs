@@ -8,7 +8,7 @@ pub fn solve(input: &[u8]) -> (String, String) {
     let mut floor: isize = 0;
     let mut basement_idx: Option<usize> = None;
 
-    for (i, c) in input.into_iter().enumerate() {
+    for (i, c) in input.iter().enumerate() {
         match *c as char {
             '(' => floor += 1,
             ')' => floor -= 1,
