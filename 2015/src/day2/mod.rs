@@ -34,3 +34,22 @@ pub fn solve(input: &[u8]) -> (String, String) {
 
     (total_area.to_string(), total_length.to_string())
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use common::{example, solution};
+
+    // Part 1
+    example!(p1, p1_example_1, "2x3x4", "58");
+    example!(p1, p1_example_2, "1x1x10", "43");
+    example!(p1, p1_example_3, "jchzalrnumimnmhp", "0");
+    example!(p1, p1_example_4, "haegwjzuvuyypxyu", "0");
+    example!(p1, p1_example_5, "dvszwmarrgswjxmb", "0");
+    solution!(p1, p1_solution, "1588178");
+
+    // Part 2
+    example!(p2, p2_example_1, "2x3x4", "34");
+    example!(p2, p2_example_2, "1x1x10", "14");
+    solution!(p2, p2_solution, "3783758");
+}

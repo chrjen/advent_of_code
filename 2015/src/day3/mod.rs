@@ -57,3 +57,21 @@ pub fn solve(input: &[u8]) -> (String, String) {
 
     (part1.to_string(), houses.len().to_string())
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use common::{example, solution};
+
+    // Part 1
+    example!(p1, p1_example_1, ">", "2");
+    example!(p1, p1_example_2, "^>v<", "4");
+    example!(p1, p1_example_3, "^v^v^v^v^v", "2");
+    solution!(p1, p1_solution, "2572");
+
+    // Part 2
+    example!(p2, p2_example_1, "^v", "3");
+    example!(p2, p2_example_2, "^>v<", "3");
+    example!(p2, p2_example_3, "^v^v^v^v^v", "11");
+    solution!(p2, p2_solution, "2631");
+}

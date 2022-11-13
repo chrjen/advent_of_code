@@ -45,3 +45,17 @@ pub fn solve(input: &[u8]) -> (String, String) {
 
     (five_zeroes.to_string(), six_zeroes.to_string())
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use common::{example, solution};
+
+    // Part 1
+    example!(p1, p1_example_1, "abcdef", "609043");
+    example!(p1, p1_example_2, "pqrstuv", "1048970");
+    solution!(p1, p1_solution, "117946");
+
+    // Part 2
+    solution!(p2, p2_solution, "3938038");
+}

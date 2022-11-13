@@ -22,3 +22,25 @@ pub fn solve(input: &[u8]) -> (String, String) {
 
     (floor.to_string(), common::from_option(basement_idx))
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use common::{example, solution};
+
+    // Part 1
+    example!(p1, p1_example_1, "(())", "0");
+    example!(p1, p1_example_2, "()()", "0");
+    example!(p1, p1_example_3, "))(((((", "3");
+    example!(p1, p1_example_4, "())", "-1");
+    example!(p1, p1_example_5, "))(", "-1");
+    example!(p1, p1_example_6, ")))", "-3");
+    example!(p1, p1_example_7, ")())())", "-3");
+    solution!(p1, p1_solution, "232");
+
+    // Part 2
+    example!(p2, p2_example_1, ")", "1");
+    example!(p2, p2_example_2, "()())", "5");
+    example!(p2, p2_example_3, ")()", "1");
+    solution!(p2, p2_solution, "1783");
+}
