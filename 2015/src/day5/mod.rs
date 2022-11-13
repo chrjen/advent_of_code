@@ -101,3 +101,90 @@ pub fn solve(input: &[u8]) -> (String, String) {
 
     (nice_count.to_string(), nicer_count.to_string())
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn p1_example_1() {
+        println!("input: ugknbfddgicrmopn");
+        let (result, _) = solve(b"ugknbfddgicrmopn");
+        assert_eq!(result, "1");
+    }
+
+    #[test]
+    fn p1_example_2() {
+        println!("input: aaa");
+        let (result, _) = solve(b"aaa");
+        assert_eq!(result, "1");
+    }
+
+    #[test]
+    fn p1_example_3() {
+        println!("input: jchzalrnumimnmhp");
+        let (result, _) = solve(b"jchzalrnumimnmhp");
+        assert_eq!(result, "0");
+    }
+
+    #[test]
+    fn p1_example_4() {
+        println!("input: haegwjzuvuyypxyu");
+        let (result, _) = solve(b"haegwjzuvuyypxyu");
+        assert_eq!(result, "0");
+    }
+
+    #[test]
+    fn p1_example_5() {
+        println!("input: dvszwmarrgswjxmb");
+        let (result, _) = solve(b"dvszwmarrgswjxmb");
+        assert_eq!(result, "0");
+    }
+
+    #[test]
+    fn p1_solution() {
+        let (result, _) = solve(SOLUTION.input);
+        assert_eq!(result, "238");
+    }
+
+    #[test]
+    fn p2_example_1() {
+        println!("input: qjhvhtzxzqqjkmpb");
+        let (_, result) = solve(b"qjhvhtzxzqqjkmpb");
+        assert_eq!(result, "1");
+    }
+
+    #[test]
+    fn p2_example_2() {
+        println!("input: xxyxx");
+        let (_, result) = solve(b"xxyxx");
+        assert_eq!(result, "1");
+    }
+
+    #[test]
+    fn p2_example_3() {
+        println!("input: uurcxstgmygtbstg");
+        let (_, result) = solve(b"uurcxstgmygtbstg");
+        assert_eq!(result, "0");
+    }
+
+    #[test]
+    fn p2_example_4() {
+        println!("input: ieodomkazucvgmuy");
+        let (_, result) = solve(b"ieodomkazucvgmuy");
+        assert_eq!(result, "0");
+    }
+
+    #[test]
+    fn p2_example_5() {
+        println!("input: aaa");
+        let (_, result) = solve(b"aaa");
+        assert_eq!(result, "0");
+    }
+
+    #[test]
+    fn p2_solution() {
+        let (_, result) = solve(SOLUTION.input);
+        assert_eq!(result, "69");
+    }
+}
