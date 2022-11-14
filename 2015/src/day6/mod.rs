@@ -85,18 +85,13 @@ pub fn solve(input: &[u8]) -> (String, String) {
         use Instruction::*;
         match instruction {
             TurnOn(cord) => {
-                map_grid(&mut grid, cord, &mut |x| *x += 1);
+                map_grid(&mut grid, cord, &mut |x| *x = x.saturating_add(1));
             }
             TurnOff(cord) => {
-                map_grid(&mut grid, cord, &mut |x| {
-                    if *x == 0 {
-                        return;
-                    }
-                    *x -= 1;
-                });
+                map_grid(&mut grid, cord, &mut |x| *x = x.saturating_sub(1));
             }
             Toggle(cord) => {
-                map_grid(&mut grid, cord, &mut |x| *x += 2);
+                map_grid(&mut grid, cord, &mut |x| *x = x.saturating_add(2));
             }
         }
     }
