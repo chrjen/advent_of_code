@@ -52,10 +52,10 @@ mod tests {
     use common::{example, solution};
 
     // Part 1
-    example!(p1, p1_example_1, "abcdef", "609043");
-    example!(p1, p1_example_2, "pqrstuv", "1048970");
-    solution!(p1, p1_solution, "117946");
+    example!(p1, p1_example_1, "abcdef", "609043", ignore);
+    example!(p1, p1_example_2, "pqrstuv", "1048970", ignore);
+    solution!(p1, p1_solution, "117946", ignore);
 
     // Part 2
-    solution!(p2, p2_solution, "3938038");
+    solution!(p2, p2_solution, "3938038", ignore);
 }
