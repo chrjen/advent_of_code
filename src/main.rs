@@ -122,8 +122,26 @@ fn println_solution_with_input(solution: &Solution, input: &[u8]) {
     let (part1, part2) = (solution.solve)(input);
     execute!(stdout, SetForegroundColor(Color::Green)).ok();
     println!("--- {} ---", solution.name);
+
     execute!(stdout, SetForegroundColor(Color::White)).ok();
-    println!("(1) {}", part1);
-    println!("(2) {}", part2);
+
+    // Output solution part 1.
+    let mut lines = part1.lines();
+    if let Some(first_line) = lines.next() {
+        println!("(1) {}", first_line);
+    }
+    for line in lines {
+        println!("    {}", line);
+    }
+
+    // Output solution part 2.
+    let mut lines = part2.lines();
+    if let Some(first_line) = lines.next() {
+        println!("(2) {}", first_line);
+    }
+    for line in lines {
+        println!("    {}", line);
+    }
+
     execute!(stdout, SetForegroundColor(Color::Reset)).ok();
 }
