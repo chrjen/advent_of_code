@@ -6,6 +6,7 @@ pub mod day13;
 pub mod day14;
 pub mod day15;
 pub mod day16;
+pub mod day17;
 pub mod day2;
 pub mod day3;
 pub mod day4;
@@ -32,4 +33,5 @@ pub const SOLUTIONS: &[common::Solution] = &[
     day14::SOLUTION,
     day15::SOLUTION,
     day16::SOLUTION,
+    day17::SOLUTION,
 ];
