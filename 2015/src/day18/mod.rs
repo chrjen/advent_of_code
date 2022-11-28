@@ -60,41 +60,64 @@ impl Grid {
             );
         }
 
-        let mut check = [true; 9];
-        check[4] = false;
-        if x == 0 {
-            check[0] = false;
-            check[3] = false;
-            check[6] = false;
-        }
-        if y == 0 {
-            check[0] = false;
-            check[1] = false;
-            check[2] = false;
-        }
-        if x == self.width - 1 {
-            check[2] = false;
-            check[5] = false;
-            check[8] = false;
-        }
-        if y == self.height - 1 {
-            check[6] = false;
-            check[7] = false;
-            check[8] = false;
-        }
+        const TOP_L: usize = 0;
+        const TOP_M: usize = 1;
+        const TOP_R: usize = 2;
+        const MID_L: usize = 3;
+        const MID_R: usize = 4;
+        const BOT_L: usize = 5;
+        const BOT_M: usize = 6;
+        const BOT_R: usize = 7;
 
         let mut count = 0;
-        for y_off in -1..=1_isize {
-            for x_off in -1..=1_isize {
-                if check[(3 * (y_off + 1) + (x_off + 1)) as usize] {
-                    let xx = (x as isize + x_off) as usize;
-                    let yy = (y as isize + y_off) as usize;
-                    if self.cells[self.width * yy + xx] {
-                        count += 1;
-                    }
-                }
-            }
+        let mut check = [true; 8];
+
+        if x == 0 {
+            check[TOP_L] = false;
+            check[MID_L] = false;
+            check[BOT_L] = false;
         }
+        if y == 0 {
+            check[TOP_L] = false;
+            check[TOP_M] = false;
+            check[TOP_R] = false;
+        }
+        if x == self.width - 1 {
+            check[TOP_R] = false;
+            check[MID_R] = false;
+            check[BOT_R] = false;
+        }
+        if y == self.height - 1 {
+            check[BOT_L] = false;
+            check[BOT_M] = false;
+            check[BOT_R] = false;
+        }
+
+        if check[TOP_L] && self.cells[self.width * (y - 1) + (x - 1)] {
+            count += 1;
+        }
+        if check[TOP_M] && self.cells[self.width * (y - 1) + x] {
+            count += 1;
+        }
+        if check[TOP_R] && self.cells[self.width * (y - 1) + (x + 1)] {
+            count += 1;
+        }
+        if check[MID_L] && self.cells[self.width * y + (x - 1)] {
+            count += 1;
+        }
+        if check[MID_R] && self.cells[self.width * y + (x + 1)] {
+            count += 1;
+        }
+        if check[BOT_L] && self.cells[self.width * (y + 1) + (x - 1)] {
+            count += 1;
+        }
+        if check[BOT_M] && self.cells[self.width * (y + 1) + x] {
+            count += 1;
+        }
+        if check[BOT_R] && self.cells[self.width * (y + 1) + (x + 1)] {
+            count += 1;
+        }
+
         count
     }
 
