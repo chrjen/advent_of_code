@@ -1,16 +1,17 @@
 [package]
+authors = ["Christer Jensen <chr.code@gmail.com>"]
+edition = "2021"
 name = "chrjen_aoc"
 version = "0.1.0"
-edition = "2021"
-authors = ["Christer Jensen <chr.code@gmail.com>"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-clap = { version = "4", features = ["derive", "cargo", "help"] }
-common = { path = "common" }
+clap = {version = "4", features = ["derive", "cargo", "help"]}
+common = {path = "common"}
 crossterm = "0.25"
-solutions_2015 = { path = "2015" }
+solutions_2015 = {path = "2015"}
+solutions_2022 = {path = "2022"}
 
 [workspace]
-members = ["2015"]
+members = ["2015", "2022"]
