@@ -1,3 +1,5 @@
+use std::{cmp::Reverse, collections::BinaryHeap};
+
 pub const SOLUTION: common::Solution = common::Solution {
     name: "Day 1: Calorie Counting",
     input: std::include_bytes!("input"),
@@ -7,43 +9,28 @@ pub const SOLUTION: common::Solution = common::Solution {
 pub fn solve(input: &[u8]) -> (String, String) {
     let input = String::from_utf8_lossy(input);
 
-    let mut top3: [i64; 3] = [i64::MIN, i64::MIN, i64::MIN];
+    let mut top3 = BinaryHeap::new();
     let mut count = 0;
-    for line in input.lines() {
-        if line.is_empty() {
-            if count > top3[0] {
-                if count > top3[1] {
-                    top3[0] = top3[1];
-                    if count > top3[2] {
-                        top3[1] = top3[2];
-                        top3[2] = count;
-                    } else {
-                        top3[1] = count;
-                    }
-                } else {
-                    top3[0] = count;
-                }
-            }
-            count = 0;
-            continue;
+
+    for elf in input.split("\n\n") {
+        for line in elf.lines() {
+            count += line.parse::<i64>().unwrap();
         }
-        count += line.parse::<i64>().unwrap();
-    }
-    if count > top3[0] {
-        if count > top3[1] {
-            top3[0] = top3[1];
-            if count > top3[2] {
-                top3[1] = top3[2];
-                top3[2] = count;
-            } else {
-                top3[1] = count;
-            }
-        } else {
-            top3[0] = count;
+
+        top3.push(Reverse(count));
+
+        if top3.len() > 3 {
+            top3.pop();
         }
+
+        count = 0;
     }
 
-    (top3[2].to_string(), top3.iter().sum::<i64>().to_string())
+    let sum = top3.iter().map(|x| x.0).sum::<i64>();
+    top3.pop();
+    top3.pop();
+
+    (top3.peek().unwrap().0.to_string(), sum.to_string())
 }
 
 #[cfg(test)]
