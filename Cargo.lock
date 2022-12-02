@@ -371,6 +371,7 @@ name = "solutions_2022"
 version = "0.1.0"
 dependencies = [
  "common",
+ "regex",
 ]
 
 [[package]]

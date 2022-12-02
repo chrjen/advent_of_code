@@ -5,3 +5,4 @@ version = "0.1.0"
 
 [dependencies]
 common = {path = "../common"}
+regex = "1"
