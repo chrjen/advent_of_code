@@ -27,21 +27,12 @@ pub fn solve(input: &[u8]) -> (String, String) {
         .map(|line| {
             let (left, right) = line.split_at(line.len() / 2);
 
-            let mut set: HashSet<char> = HashSet::new();
-            for c in left.chars() {
-                set.insert(c);
-            }
+            let set: HashSet<char> = left.chars().collect();
 
             right
                 .chars()
-                .find_map(|c| {
-                    if set.contains(&c) {
-                        Some(to_priority(c))
-                    } else {
-                        None
-                    }
-                })
-                .unwrap()
+                .find(move |c| set.contains(c))
+                .map_or_else(|| panic!("didn't find a solution"), to_priority)
         })
         .sum();
 
@@ -56,26 +47,16 @@ pub fn solve(input: &[u8]) -> (String, String) {
         let third = lines.next().unwrap();
 
         // Fill first set with all characters from first rucksack.
-        let mut set_1: HashSet<char> = HashSet::new();
-        for c in first.chars() {
-            set_1.insert(c);
-        }
+        let set_1: HashSet<char> = first.chars().collect();
 
         // Find all shared letters from first and second rucksack and put them in `set_2`.
-        let mut set_2: HashSet<char> = HashSet::new();
-        for c in second.chars() {
-            if set_1.contains(&c) {
-                set_2.insert(c);
-            }
-        }
+        let set_2: HashSet<char> = second.chars().filter(move |c| set_1.contains(c)).collect();
 
         // Find all shared letters from `set_2` and third rucksack.
-        for c in third.chars() {
-            if set_2.contains(&c) {
-                total += to_priority(c);
-                break;
-            }
-        }
+        total += third
+            .chars()
+            .find(move |c| set_2.contains(c))
+            .map_or_else(|| panic!("unable to find badge"), to_priority);
     };
 
     (part1.to_string(), part2.to_string())
