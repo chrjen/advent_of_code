@@ -9,6 +9,7 @@ pub mod day16;
 pub mod day17;
 pub mod day18;
 pub mod day2;
+pub mod day20;
 pub mod day3;
 pub mod day4;
 pub mod day5;
@@ -17,23 +18,30 @@ pub mod day7;
 pub mod day8;
 pub mod day9;
 
-pub const SOLUTIONS: &[common::Solution] = &[
-    day1::SOLUTION,
-    day2::SOLUTION,
-    day3::SOLUTION,
-    day4::SOLUTION,
-    day5::SOLUTION,
-    day6::SOLUTION,
-    day7::SOLUTION,
-    day8::SOLUTION,
-    day9::SOLUTION,
-    day10::SOLUTION,
-    day11::SOLUTION,
-    day12::SOLUTION,
-    day13::SOLUTION,
-    day14::SOLUTION,
-    day15::SOLUTION,
-    day16::SOLUTION,
-    day17::SOLUTION,
-    day18::SOLUTION,
+pub const SOLUTIONS: &[Option<common::Solution>] = &[
+    Some(day1::SOLUTION),
+    Some(day2::SOLUTION),
+    Some(day3::SOLUTION),
+    Some(day4::SOLUTION),
+    Some(day5::SOLUTION),
+    Some(day6::SOLUTION),
+    Some(day7::SOLUTION),
+    Some(day8::SOLUTION),
+    Some(day9::SOLUTION),
+    Some(day10::SOLUTION),
+    Some(day11::SOLUTION),
+    Some(day12::SOLUTION),
+    Some(day13::SOLUTION),
+    Some(day14::SOLUTION),
+    Some(day15::SOLUTION),
+    Some(day16::SOLUTION),
+    Some(day17::SOLUTION),
+    Some(day18::SOLUTION),
+    None,
+    None,
+    None,
+    None,
+    None,
+    None,
+    None,
 ];

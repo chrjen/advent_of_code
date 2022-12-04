@@ -14,7 +14,7 @@ use solutions_2022 as s22;
 
 const ALL_YEARS: [u32; 2] = [2015, 2022];
 
-fn solutions_for_year(year: u32) -> Option<&'static [Solution<'static>]> {
+fn solutions_for_year(year: u32) -> Option<&'static [Option<Solution<'static>>]> {
     match year {
         2015 => Some(s15::SOLUTIONS),
         2022 => Some(s22::SOLUTIONS),
@@ -65,7 +65,7 @@ fn run_specific_year(year: u32, day: Option<u32>, input: Option<PathBuf>) {
             run_specific_day(solutions, day, input);
         }
 
-        for solution in solutions {
+        for solution in solutions.iter().flatten() {
             println_solution(solution);
         }
     } else {
@@ -73,11 +73,12 @@ fn run_specific_year(year: u32, day: Option<u32>, input: Option<PathBuf>) {
     }
 }
 
-fn run_specific_day(solutions: &[Solution], day: u32, path: Option<PathBuf>) -> ! {
+fn run_specific_day(solutions: &[Option<Solution>], day: u32, path: Option<PathBuf>) -> ! {
     let idx = (day - 1) as usize;
 
-    if (0..solutions.len()).contains(&idx) {
-        let mut input: &[u8] = solutions[idx].input;
+    if (0..solutions.len()).contains(&idx) && solutions[idx].is_some() {
+        let solution = solutions[idx].as_ref().unwrap();
+        let mut input: &[u8] = solution.input;
         let mut buf = Vec::new();
 
         if let Some(path) = path {
@@ -106,7 +107,7 @@ fn run_specific_day(solutions: &[Solution], day: u32, path: Option<PathBuf>) -> 
             input = &buf;
         }
 
-        println_solution_with_input(&solutions[idx], input);
+        println_solution_with_input(solution, input);
         exit(0);
     } else {
         eprintln!("solution for day {day} not found.");
