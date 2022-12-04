@@ -38,7 +38,7 @@ pub const SOLUTIONS: &[Option<common::Solution>] = &[
     Some(day17::SOLUTION),
     Some(day18::SOLUTION),
     None,
-    None,
+    Some(day20::SOLUTION),
     None,
     None,
     None,

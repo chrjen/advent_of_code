@@ -5,6 +5,7 @@ version = "0.1.0"
 
 [dependencies]
 common = {path = "../common"}
+divisors = "0.2.1"
 md5 = "0.7"
 regex = "1"
 serde = "1.0"
