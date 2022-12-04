@@ -11,16 +11,19 @@ pub fn solve(input: &[u8]) -> (String, String) {
 
     let reg = Regex::new(r"(\d+)-(\d+),(\d+)-(\d+)").unwrap();
 
-    let pairs = input.lines().map(|line| {
-        let caps = reg.captures(line).unwrap();
-        (
-            caps[1].parse::<u32>().unwrap()..=caps[2].parse::<u32>().unwrap(),
-            caps[3].parse::<u32>().unwrap()..=caps[4].parse::<u32>().unwrap(),
-        )
-    });
+    let pairs: Vec<_> = input
+        .lines()
+        .map(|line| {
+            let caps = reg.captures(line).unwrap();
+            (
+                caps[1].parse::<u32>().unwrap()..=caps[2].parse::<u32>().unwrap(),
+                caps[3].parse::<u32>().unwrap()..=caps[4].parse::<u32>().unwrap(),
+            )
+        })
+        .collect();
 
     let part1 = pairs
-        .clone()
+        .iter()
         .filter(|(first, second)| {
             first.contains(second.start()) && first.contains(second.end())
                 || second.contains(first.start()) && second.contains(first.end())
@@ -28,6 +31,7 @@ pub fn solve(input: &[u8]) -> (String, String) {
         .count();
 
     let part2 = pairs
+        .iter()
         .filter(|(first, second)| {
             first.contains(second.start())
                 || first.contains(second.end())
