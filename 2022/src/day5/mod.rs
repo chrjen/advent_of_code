@@ -60,8 +60,8 @@ pub fn solve(input: &[u8]) -> (String, String) {
 
     // Part 1.
     let mut part_1_stacks = stacks.clone();
-    for &(n, from, to) in instructions.iter() {
-        for _ in 0..n {
+    for &(num, from, to) in instructions.iter() {
+        for _ in 0..num {
             let tmp = part_1_stacks[from].pop().unwrap();
             part_1_stacks[to].push(tmp);
         }
@@ -69,9 +69,9 @@ pub fn solve(input: &[u8]) -> (String, String) {
 
     // Part 2.
     let mut part_2_stacks = stacks;
-    for &(n, from, to) in instructions.iter() {
-        let idx = part_2_stacks[from].len() - n;
-        for _ in 0..n {
+    for &(num, from, to) in instructions.iter() {
+        let idx = part_2_stacks[from].len() - num;
+        for _ in 0..num {
             let c = part_2_stacks[from].remove(idx);
             part_2_stacks[to].push(c);
         }
