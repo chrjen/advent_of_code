@@ -1,4 +1,4 @@
-use std::collections::HashSet;
+use std::collections::HashMap;
 
 pub const SOLUTION: common::Solution = common::Solution {
     name: "Day 6: Tuning Trouble",
@@ -9,37 +9,38 @@ pub const SOLUTION: common::Solution = common::Solution {
 pub fn solve(input: &[u8]) -> (String, String) {
     let input: Vec<_> = String::from_utf8_lossy(input).chars().collect();
 
-    /// Sliding window with length `package_len` over the input.
-    /// Processing `package_len` characters at the time.
+    /// Iterates over the input, one character at the time. A `HashMap` is used to keep track
+    /// how many unique characters there are in the last `packet_len`
     ///
-    /// A `HashSet` is used to remove any duplicates in each window.
+    /// Imagine a sliding window over the input of length `packet_len`. As characters enters the
+    /// window the counter for that character gets incremented/inserted. Then decremented/removed
+    /// when leaving the window.
     ///
-    /// We clear previous set of characters each iteration. Could probably be made more
-    /// efficient by reusing `set` rather than clearing it for each window. E.g. using
-    /// a `HashMap<char, u32>` instead. Adding and removing `char`s as the window slides along.
-    ///
-    /// If the set and window has the same length then all characters must have been unique and
-    /// we return the index of the window plus its length.
-    fn find_packet(input: &[char], package_len: usize) -> Option<usize> {
-        let mut result = None;
-        let mut set = HashSet::new();
+    /// If the `map` and `packet_len` has the same length then all characters must have been unique and
+    /// we return the index + 1, for the index of the character after the packet.
+    fn find_packet(input: &[char], packet_len: usize) -> Option<usize> {
+        let mut map = HashMap::new();
 
-        for (i, window) in input.windows(package_len).enumerate() {
-            set.clear();
+        for (i, c) in input.iter().enumerate() {
+            *map.entry(c).or_insert(0) += 1;
 
-            for c in window {
-                if !set.insert(c) {
-                    break;
+            if i >= packet_len {
+                let old_c = &input[i - packet_len];
+
+                let count = map.get_mut(old_c).unwrap();
+                *count -= 1;
+
+                if *count == 0 {
+                    map.remove(old_c);
                 }
             }
 
-            if set.len() == window.len() {
-                result = Some(i + package_len);
-                break;
+            if map.len() == packet_len {
+                return Some(i + 1);
             }
         }
 
-        result
+        None
     }
 
     (
