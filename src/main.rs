@@ -52,7 +52,7 @@ fn main() {
 
     for year in ALL_YEARS {
         execute!(stdout, SetForegroundColor(Color::Cyan)).ok();
-        println!("------ YEARS {} ------", year);
+        println!("------ YEAR {} ------", year);
         execute!(stdout, SetForegroundColor(Color::Reset)).ok();
 
         run_specific_year(year, None, None);
