@@ -1,1 +1,4 @@
 /target
+
+# Ignore any generated Cargo.lock files except the one in the root directory.
+*/**/Cargo.lock
