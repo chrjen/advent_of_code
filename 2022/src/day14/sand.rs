@@ -85,14 +85,7 @@ impl World {
     pub fn add_sand_grain(&mut self) -> Loc {
         let mut grain = self.source;
 
-        loop {
-            if grain.y >= self.floor - 1 {
-                if self.tiles.insert(grain, Tile::Sand).is_none() {
-                    self.count += 1;
-                }
-                break grain;
-            }
-
+        while grain.y < self.floor - 1 {
             if !self.tiles.contains_key(&grain.offset(0, 1)) {
                 grain = grain.offset(0, 1);
             } else if !self.tiles.contains_key(&grain.offset(-1, 1)) {
@@ -100,12 +93,15 @@ impl World {
             } else if !self.tiles.contains_key(&grain.offset(1, 1)) {
                 grain = grain.offset(1, 1);
             } else {
-                if self.tiles.insert(grain, Tile::Sand).is_none() {
-                    self.count += 1;
-                }
-                break grain;
+                break; // Grain settled down before hitting floor.
             }
         }
+
+        if self.tiles.insert(grain, Tile::Sand).is_none() {
+            self.count += 1;
+        }
+
+        grain
     }
 
     #[allow(dead_code)]
