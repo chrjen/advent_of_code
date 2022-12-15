@@ -107,7 +107,7 @@ impl World {
                     .filter(|(sensor, radius)| sensor.manhattan(&current) <= **radius)
                     .map(|(sensor, &radius)| {
                         let (dx, dy) = (sensor.x - current.x, sensor.y - current.y);
-                        dx + radius as i32 + 1 - dy.abs()
+                        dx.saturating_add_unsigned(radius) + 1 - dy.abs()
                     })
                     .max();
 
