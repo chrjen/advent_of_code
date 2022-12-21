@@ -86,6 +86,19 @@ fn max_geodes(time: u32, state: State, blueprint: &Blueprint) -> u32 {
 
         let mut geodes = 0;
 
+        // Each iteration we decide which robot to build next, fast-forward until
+        // we have enough resources, build the robot, then repeat recursively.
+        //
+        // To build a robot we calculate the resources necessary, then how long
+        // to wait until they become available. We collect resources for the time
+        // we waited, remove resources equal to the cost of making the robot,
+        // and lastly increment the robot counter.
+        //
+        // To optimise we make sure to stop making robots when we no longer need
+        // to. If for a resource, the robots can already produce more of that resource
+        // then could ever be consumed within the remaining time, we no longer make
+        // robots for that resource.
+
         // Build an Ore Robot.
         if time * state.ore_robot + state.ore_resource < time * max_ore {
             let ores_left = blueprint.ore_robot_ore.saturating_sub(state.ore_resource);
@@ -162,6 +175,12 @@ pub fn solve(input: &[u8]) -> (String, String) {
     let input = String::from_utf8_lossy(input);
 
     let blueprints = parse::blueprints(input.as_ref());
+
+    // Both parts tries to make use of parallelisation to reduce the
+    // execution time. Currently a new thread is being created for each blueprint.
+    // On most systems this might be more than the number of processes that can
+    // run in parallel thus not being helpful, perhaps even counterproductive.
+    // However due to the low number of blueprints this is deemed acceptable.
 
     // Part 1.
     let geodes = Arc::new(AtomicU32::new(0));
