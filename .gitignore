@@ -2,3 +2,6 @@
 
 # Ignore any generated Cargo.lock files except the one in the root directory.
 */**/Cargo.lock
+
+# Ignore file 'output'. File used to dump terminal output for later review.
+/output
