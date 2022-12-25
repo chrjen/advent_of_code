@@ -9,4 +9,6 @@ crossterm = "0.25"
 nom = "7"
 num = "0.4"
 regex = "1"
+
+[dev-dependencies]
 rstest = "0.16"
