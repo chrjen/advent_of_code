@@ -118,7 +118,6 @@ impl World {
     pub fn walk(&self, step: &mut usize, start: (usize, usize), end: (usize, usize)) {
         let mut current_step = HashSet::new();
         let mut next_step = HashSet::new();
-        let mut visited = HashSet::new();
         current_step.insert(start);
 
         'outer: loop {
@@ -134,8 +133,6 @@ impl World {
                         next_step.insert(neighbour);
                     }
                 }
-
-                visited.insert((*step, x, y));
             }
 
             mem::swap(&mut current_step, &mut next_step);
