@@ -75,7 +75,7 @@ pub fn solve(input: &[u8]) -> (String, String) {
             let neighbours = Directions::neighbours((x, y));
             let is_empty: [bool; 8] = neighbours.map(|coord| !elves.contains(&coord));
 
-            if is_empty.iter().filter(|&&b| b).count() == is_empty.len() {
+            if is_empty.iter().all(|&b| b) {
                 continue;
             }
 
