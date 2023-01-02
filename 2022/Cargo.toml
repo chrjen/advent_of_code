@@ -6,8 +6,10 @@ version = "0.1.0"
 [dependencies]
 common = {path = "../common"}
 crossterm = "0.25"
+itertools = "0.10"
 nom = "7"
 num = "0.4"
+petgraph = "0.6"
 regex = "1"
 
 [dev-dependencies]
