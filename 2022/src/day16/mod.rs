@@ -1,13 +1,13 @@
 mod data;
 mod parse;
 
+use itertools::{Either, Itertools};
+use petgraph::{algo::dijkstra::dijkstra, prelude::*};
+use rayon::prelude::*;
+
 use std::collections::{HashMap, VecDeque};
 
 use data::*;
-
-use petgraph::{algo::dijkstra::dijkstra, prelude::*};
-
-use itertools::{Either, Itertools};
 
 pub const SOLUTION: common::Solution = common::Solution {
     name: "Day 16: Proboscidea Volcanium",
@@ -104,23 +104,26 @@ pub fn solve(input: &[u8]) -> (String, String) {
 
     // Part 2.
     let num_partitions = 1 << (others.len() - 1);
-    let mut part2 = 0;
-    for partition in 0..num_partitions {
-        // println!("partition: {partition}/{num_partitions}");
-        let (mut elf, mut elephant): (VecDeque<_>, VecDeque<_>) =
-            others.iter().copied().enumerate().partition_map(|(i, n)| {
-                if partition & 1 << i == 0 {
-                    Either::Left(n)
-                } else {
-                    Either::Right(n)
-                }
-            });
+    let part2 = (0..num_partitions)
+        .into_par_iter()
+        .map(|partition| {
+            // println!("partition: {partition}/{num_partitions}");
+            let (mut elf, mut elephant): (VecDeque<_>, VecDeque<_>) =
+                others.iter().copied().enumerate().partition_map(|(i, n)| {
+                    if partition & 1 << i == 0 {
+                        Either::Left(n)
+                    } else {
+                        Either::Right(n)
+                    }
+                });
 
-        let elf_max = max_pressure(start, &mut elf, 26, &complete_graph);
-        let elephant_max = max_pressure(start, &mut elephant, 26, &complete_graph);
+            let elf_max = max_pressure(start, &mut elf, 26, &complete_graph);
+            let elephant_max = max_pressure(start, &mut elephant, 26, &complete_graph);
 
-        part2 = part2.max(elf_max + elephant_max);
-    }
+            elf_max + elephant_max
+        })
+        .max()
+        .unwrap();
 
     (part1.to_string(), part2.to_string())
 }
