@@ -5,4 +5,5 @@ version = "0.1.0"
 
 [dependencies]
 common = {path = "../common"}
+itertools = "0.10"
 regex = "1"
