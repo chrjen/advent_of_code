@@ -11,7 +11,8 @@ clap = {version = "4", features = ["derive", "cargo", "help"]}
 common = {path = "common"}
 crossterm = "0.25"
 solutions_2015 = {path = "2015"}
+solutions_2016 = {path = "2016"}
 solutions_2022 = {path = "2022"}
 
 [workspace]
-members = ["2015", "2022"]
+members = ["2015", "2016", "2022"]

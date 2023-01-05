@@ -48,6 +48,7 @@ dependencies = [
  "common",
  "crossterm",
  "solutions_2015",
+ "solutions_2016",
  "solutions_2022",
 ]
 
@@ -810,6 +811,14 @@ dependencies = [
  "regex",
  "serde",
  "serde_json",
+]
+
+[[package]]
+name = "solutions_2016"
+version = "0.1.0"
+dependencies = [
+ "common",
+ "regex",
 ]
 
 [[package]]
