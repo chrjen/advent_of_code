@@ -16,10 +16,21 @@ fn push_some<T>(mut vec: Vec<T>, item: Option<T>) -> Vec<T> {
     vec
 }
 
+/// Parses a 0 or more single digits.
+/// E.g. "4", "8", "9"
+pub(super) fn parse_digit0(input: &str) -> IResult<&str, Vec<u32>> {
+    let parser = terminated(
+        opt(peek(map_parser(take(1usize), complete::u32))),
+        complete::anychar,
+    );
+    fold_many0(parser, Vec::new, push_some)(input)
+}
+
 /// Parses a single digit including the spelt out form of each digit.
-pub(super) fn parse_digit(input: &str) -> IResult<&str, i32> {
+/// E.g. "4", "eight", "9"
+pub(super) fn parse_alphanumeric_digit(input: &str) -> IResult<&str, u32> {
     alt((
-        map_parser(take(1usize), complete::i32),
+        map_parser(take(1usize), complete::u32),
         value(1, tag("one")),
         value(2, tag("two")),
         value(3, tag("three")),
@@ -32,7 +43,9 @@ pub(super) fn parse_digit(input: &str) -> IResult<&str, i32> {
     ))(input)
 }
 
-pub(super) fn parse_line(input: &str) -> Result<Vec<i32>, nom::Err<nom::error::Error<&str>>> {
-    let parser = terminated(opt(peek(parse_digit)), complete::anychar);
-    fold_many0(parser, Vec::new, push_some)(input).map(|(_, v)| v)
+/// Parses a 0 or more digits including the spelt out form of each digit.
+/// E.g. "4", "eight", "9"
+pub(super) fn parse_alphanumeric_digit0(input: &str) -> IResult<&str, Vec<u32>> {
+    let parser = terminated(opt(peek(parse_alphanumeric_digit)), complete::anychar);
+    fold_many0(parser, Vec::new, push_some)(input)
 }

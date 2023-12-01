@@ -1,3 +1,7 @@
+use std::fmt::Debug;
+
+use self::parse::{parse_alphanumeric_digit0, parse_digit0};
+
 pub const SOLUTION: common::Solution = common::Solution {
     name: "Day 1: Trebuchet?!",
     input: std::include_bytes!("input"),
@@ -6,43 +10,34 @@ pub const SOLUTION: common::Solution = common::Solution {
 
 mod parse;
 
+/// Goes line by line and parses all number using the provided parser and then
+/// finds the first and last digit on each line. It then sums up all of these
+/// numbers for a final sum of all lines.
+fn sum_lines<'a, F, E>(mut parser: F, input: &'a str) -> u32
+where
+    F: FnMut(&'a str) -> Result<(&'a str, Vec<u32>), E>,
+    E: Debug,
+{
+    let mut sum: u32 = 0u32;
+    for (i, line) in input.lines().enumerate() {
+        let (_, numbers) = parser(line).expect("should parse successfully");
+        let first = numbers
+            .first()
+            .unwrap_or_else(|| panic!("line {} should contain at least one digit", i + 1));
+        let last = numbers.last().unwrap();
+        sum += first * 10 + last;
+    }
+    sum
+}
+
 pub fn solve(input: &[u8]) -> (String, String) {
     let input = String::from_utf8_lossy(input);
+    let input = input.as_ref();
 
-    let mut part1_sum = 0;
-
-    for line in input.lines() {
-        let mut first: Option<char> = None;
-        let mut last: Option<char> = None;
-
-        for ch in line.chars() {
-            match (ch.is_numeric(), first) {
-                (true, None) => {
-                    first = Some(ch);
-                    last = Some(ch)
-                }
-                (true, Some(_)) => last = Some(ch),
-                (false, _) => (),
-            }
-        }
-
-        let first = first.expect("line should have a first digit");
-        let last = last.expect("line should have a last digit");
-
-        let s: String = [first, last].iter().collect();
-        part1_sum += s.parse::<i32>().expect("should be a number");
-    }
-
-    let mut part2_sum = 0;
-
-    for line in input.lines() {
-        let numbers = parse::parse_line(line).unwrap();
-        let first = numbers.first().expect("line should have a first digit");
-        let last = numbers.last().expect("line should have a last digit");
-        part2_sum += first * 10 + last;
-    }
-
-    (part1_sum.to_string(), part2_sum.to_string())
+    (
+        sum_lines(parse_digit0, input).to_string(),
+        sum_lines(parse_alphanumeric_digit0, input).to_string(),
+    )
 }
 
 #[cfg(test)]
