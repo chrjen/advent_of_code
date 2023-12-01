@@ -9,8 +9,8 @@ pub const SOLUTION: common::Solution = common::Solution {
 fn look_and_say<'a>(dst: &'a mut String, src: &str) -> &'a str {
     let mut chars = src.chars();
     let Some(mut prev) = chars.next() else {
-            return dst;
-        };
+        return dst;
+    };
     let mut count: u32 = 1;
 
     for ch in chars {

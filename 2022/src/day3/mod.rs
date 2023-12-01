@@ -41,7 +41,7 @@ pub fn solve(input: &[u8]) -> (String, String) {
     let mut total: u32 = 0;
     let part2 = loop {
         let Some(first) = lines.next() else {
-            break total
+            break total;
         };
         let second = lines.next().unwrap();
         let third = lines.next().unwrap();

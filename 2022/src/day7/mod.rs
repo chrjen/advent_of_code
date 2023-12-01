@@ -83,7 +83,7 @@ pub fn solve(input: &[u8]) -> (String, String) {
     // a given command with any whitespaces trimmed. First value should be the name of the program,
     // followed by zero or a single argument and lastly output from the command.
     for mut cmd in input.split_terminator('$').map(|v| v.split_whitespace()) {
-        let Some(program) =  cmd.next() else  {
+        let Some(program) = cmd.next() else {
             panic!("no program name in command");
         };
 
