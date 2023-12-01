@@ -1,3 +1,10 @@
+//! Advent of Code solutions by Christer Jensen <chr.code@gmail.com>
+//!
+//! Advent of Code is an Advent calendar of small programming puzzles for a
+//! variety of skill sets and skill levels that can be solved in any
+//! programming language you like.
+//! Link: https://adventofcode.com/
+
 use std::fs::File;
 use std::io;
 use std::io::Read;
@@ -24,12 +31,6 @@ fn solutions_for_year(year: u32) -> Option<&'static [Option<Solution<'static>>]>
     }
 }
 
-/// Advent of Code solutions by Christer Jensen <chr.code@gmail.com>
-///
-/// Advent of Code is an Advent calendar of small programming puzzles for a
-/// variety of skill sets and skill levels that can be solved in any
-/// programming language you like.
-/// Link: https://adventofcode.com/
 #[derive(Parser, Debug)]
 #[command(version, about, long_about)]
 struct Args {
