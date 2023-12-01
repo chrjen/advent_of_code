@@ -10,14 +10,14 @@ pub fn solve(input: &[u8]) -> (String, String) {
     fn calc_num_present_infinite(house: u32) -> u32 {
         [1, house]
             .into_iter()
-            .chain(divisors::get_divisors(house).into_iter())
+            .chain(divisors::get_divisors(house))
             .sum::<u32>()
     }
 
     fn calc_num_present_50(house: u32) -> u32 {
         [1, house]
             .into_iter()
-            .chain(divisors::get_divisors(house).into_iter())
+            .chain(divisors::get_divisors(house))
             .filter(|&x| house <= x * 50)
             .sum::<u32>()
     }

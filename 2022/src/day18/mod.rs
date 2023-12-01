@@ -67,8 +67,7 @@ pub fn solve(input: &[u8]) -> (String, String) {
     // unvisited voxels, unless if has already been visited or on the unvisited
     // list. `count` is the number of faces discovered.
     let mut count = 0;
-    while !unvisited.is_empty() {
-        let (x, y, z) = unvisited.pop().unwrap();
+    while let Some((x, y, z)) = unvisited.pop() {
         visited.insert((x, y, z));
 
         let neighbours = &[

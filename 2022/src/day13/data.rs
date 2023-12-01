@@ -27,26 +27,26 @@ impl From<Vec<Data>> for Data {
     }
 }
 
-impl PartialOrd for Data {
-    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+impl Ord for Data {
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
         use std::cmp::Ordering;
 
         match (self, other) {
-            (Data::Integer(a), Data::Integer(b)) => a.partial_cmp(b),
-            (Data::Integer(_), Data::List(_)) => self.to_list().partial_cmp(other),
-            (Data::List(_), Data::Integer(_)) => self.partial_cmp(&other.to_list()),
+            (Data::Integer(a), Data::Integer(b)) => a.cmp(b),
+            (Data::Integer(_), Data::List(_)) => self.to_list().cmp(other),
+            (Data::List(_), Data::Integer(_)) => self.cmp(&other.to_list()),
             (Data::List(a), Data::List(b)) => {
                 let (mut a_it, mut b_it) = (a.iter(), b.iter());
                 loop {
                     let (a, b) = (a_it.next(), b_it.next());
                     match (a, b) {
-                        (None, None) => return Some(Ordering::Equal),
-                        (None, Some(_)) => return Some(Ordering::Less),
-                        (Some(_), None) => return Some(Ordering::Greater),
-                        (Some(c), Some(d)) => match c.partial_cmp(d).unwrap() {
-                            Ordering::Less => return Some(Ordering::Less),
+                        (None, None) => return Ordering::Equal,
+                        (None, Some(_)) => return Ordering::Less,
+                        (Some(_), None) => return Ordering::Greater,
+                        (Some(c), Some(d)) => match c.cmp(d) {
+                            Ordering::Less => return Ordering::Less,
                             Ordering::Equal => continue,
-                            Ordering::Greater => return Some(Ordering::Greater),
+                            Ordering::Greater => return Ordering::Greater,
                         },
                     }
                 }
@@ -55,9 +55,9 @@ impl PartialOrd for Data {
     }
 }
 
-impl Ord for Data {
-    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
-        self.partial_cmp(other).unwrap()
+impl PartialOrd for Data {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        Some(self.cmp(other))
     }
 }
 
