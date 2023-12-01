@@ -13,6 +13,7 @@ crossterm = "0.25"
 solutions_2015 = {path = "2015"}
 solutions_2016 = {path = "2016"}
 solutions_2022 = {path = "2022"}
+solutions_2023 = {path = "2023"}
 
 [workspace]
-members = ["2015", "2016", "2022"]
+members = ["2015", "2016", "2022", "2023"]

@@ -50,6 +50,7 @@ dependencies = [
  "solutions_2015",
  "solutions_2016",
  "solutions_2022",
+ "solutions_2023",
 ]
 
 [[package]]
@@ -835,6 +836,14 @@ dependencies = [
  "rayon",
  "regex",
  "rstest",
+]
+
+[[package]]
+name = "solutions_2023"
+version = "0.1.0"
+dependencies = [
+ "common",
+ "nom",
 ]
 
 [[package]]

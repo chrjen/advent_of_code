@@ -1,0 +1,8 @@
+[package]
+edition = "2021"
+name = "solutions_2023"
+version = "0.1.0"
+
+[dependencies]
+common = {path = "../common"}
+nom = "7"

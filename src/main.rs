@@ -19,14 +19,16 @@ use crossterm::style::{Color, SetForegroundColor};
 use solutions_2015 as s15;
 use solutions_2016 as s16;
 use solutions_2022 as s22;
+use solutions_2023 as s23;
 
-const ALL_YEARS: [u32; 3] = [2015, 2016, 2022];
+const ALL_YEARS: [u32; 4] = [2015, 2016, 2022, 2023];
 
 fn solutions_for_year(year: u32) -> Option<&'static [Option<Solution<'static>>]> {
     match year {
         2015 => Some(s15::SOLUTIONS),
         2016 => Some(s16::SOLUTIONS),
         2022 => Some(s22::SOLUTIONS),
+        2023 => Some(s23::SOLUTIONS),
         _ => None,
     }
 }
