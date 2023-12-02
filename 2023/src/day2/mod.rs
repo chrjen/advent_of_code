@@ -6,6 +6,10 @@ pub const SOLUTION: common::Solution = common::Solution {
 
 mod parse;
 
+const MAX_RED: u32 = 12;
+const MAX_GREEN: u32 = 13;
+const MAX_BLUE: u32 = 14;
+
 #[derive(Debug)]
 struct Game {
     id: u32,
@@ -19,42 +23,45 @@ struct Round {
     blue: Option<u32>,
 }
 
-pub fn solve(input: &[u8]) -> (String, String) {
-    let input = String::from_utf8_lossy(input);
-    let input = input.as_ref();
+impl Game {
+    fn is_possible(&self) -> bool {
+        self.rounds.iter().fold(true, |acc, round| {
+            acc && round.red.map_or(true, |count| count <= MAX_RED)
+                && round.green.map_or(true, |count| count <= MAX_GREEN)
+                && round.blue.map_or(true, |count| count <= MAX_BLUE)
+        })
+    }
 
-    solve_for(input, 12, 13, 14)
-}
-
-fn solve_for(input: &str, red: u32, green: u32, blue: u32) -> (String, String) {
-    let mut part1_sum = 0;
-    let mut part2_sum = 0;
-    for line in input.lines() {
-        let (_, game) = parse::parse_game(line).unwrap();
-
-        // Part 1
-        let possible = game.rounds.iter().fold(true, |acc, round| {
-            acc && round.red.map_or(true, |count| count <= red)
-                && round.green.map_or(true, |count| count <= green)
-                && round.blue.map_or(true, |count| count <= blue)
-        });
-        if possible {
-            part1_sum += game.id;
-        }
-
-        // Part 2
+    fn power(&self) -> u32 {
         let (min_red, min_green, min_blue) =
-            game.rounds.iter().fold((0, 0, 0), |(r, g, b), round| {
+            self.rounds.iter().fold((0, 0, 0), |(r, g, b), round| {
                 (
                     round.red.map_or(r, |v| v.max(r)),
                     round.green.map_or(g, |v| v.max(g)),
                     round.blue.map_or(b, |v| v.max(b)),
                 )
             });
-        part2_sum += min_red * min_green * min_blue
+        min_red * min_green * min_blue
     }
+}
 
-    (part1_sum.to_string(), part2_sum.to_string())
+pub fn solve(input: &[u8]) -> (String, String) {
+    let input = String::from_utf8_lossy(input);
+
+    let (_, games) = parse::parse_game0(input.as_ref()).unwrap();
+    (
+        games
+            .iter()
+            .filter(|game| game.is_possible())
+            .map(|game| game.id)
+            .sum::<u32>()
+            .to_string(),
+        games
+            .iter()
+            .map(|game| game.power())
+            .sum::<u32>()
+            .to_string(),
+    )
 }
 
 #[cfg(test)]

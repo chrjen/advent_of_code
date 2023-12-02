@@ -1,7 +1,7 @@
 use nom::{
     branch::alt,
     bytes::complete::{tag_no_case, take_till},
-    character::complete::{self, space0, space1},
+    character::complete::{self, newline, space0, space1},
     combinator::{map_parser, opt},
     multi::separated_list1,
     sequence::{delimited, terminated, tuple},
@@ -64,4 +64,8 @@ pub(super) fn parse_game(input: &str) -> IResult<&str, Game> {
         ),
     ))(input)
     .map(|(s, (id, rounds))| (s, Game { id, rounds }))
+}
+
+pub(super) fn parse_game0(input: &str) -> IResult<&str, Vec<Game>> {
+    separated_list1(newline, map_parser(take_till(|c| c == '\n'), parse_game))(input)
 }
