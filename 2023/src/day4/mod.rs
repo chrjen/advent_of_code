@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 pub const SOLUTION: common::Solution = common::Solution {
     name: "Day 4: Scratchcards",
     input: std::include_bytes!("input"),
@@ -9,48 +11,33 @@ mod parse;
 pub fn solve(input: &[u8]) -> (String, String) {
     let input = String::from_utf8_lossy(input);
 
-    // Part 1
-    let part1: u32 = input
+    let cards: Box<_> = input
         .lines()
-        .map(|line| {
-            let (_, (win_num, num)) = parse::parse_card(line).unwrap();
-            let hits = num.intersection(&win_num).count();
-            if hits == 0 {
-                0
-            } else {
-                2_u32.pow((hits - 1) as u32)
-            }
+        .map(|line| parse::parse_card(line).unwrap().1)
+        .collect();
+
+    // Part 1
+    let part1: u32 = cards
+        .iter()
+        .map(|(win_num, num)| {
+            let points = num.intersection(win_num).count();
+            points.checked_sub(1).map_or(0, |v| 2_u32.pow(v as u32))
         })
         .sum();
 
-    // Part 2s
-    let mut num_copies = Vec::new();
-    let part2: usize = input
-        .lines()
-        .map(|line| {
-            let (_, (win_num, num)) = parse::parse_card(line).unwrap();
-            let hits = num.intersection(&win_num).count();
-
-            let count = num_copies.len() + 1;
-
-            // Subtract one from all and remove zeroes so
-            // that the length of num_copies stay accurate.
-            num_copies = num_copies
-                .drain(..)
-                .filter_map(|mut v| {
-                    v -= 1;
-                    if v == 0 {
-                        None
-                    } else {
-                        Some(v)
-                    }
-                })
-                .collect();
-
-            if hits != 0 {
-                for _ in 0..count {
-                    num_copies.push(hits);
-                }
+    // Part 2
+    let mut num_copies: HashMap<usize, u32> = HashMap::new();
+    let part2: u32 = cards
+        .iter()
+        .enumerate()
+        .map(|(i, (win_num, num))| {
+            let points = num.intersection(win_num).count();
+            let count = num_copies.get(&i).copied().unwrap_or(1);
+            for j in 1..=points {
+                num_copies
+                    .entry(i + j)
+                    .and_modify(|v| *v += count)
+                    .or_insert(count + 1);
             }
 
             count
