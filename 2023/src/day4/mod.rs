@@ -11,29 +11,28 @@ mod parse;
 pub fn solve(input: &[u8]) -> (String, String) {
     let input = String::from_utf8_lossy(input);
 
-    let cards: Box<_> = input
+    let wins_all: Box<_> = input
         .lines()
         .map(|line| parse::parse_card(line).unwrap().1)
+        .map(|(win_num, num)| num.intersection(&win_num).count())
         .collect();
 
     // Part 1
-    let part1: u32 = cards
+    let part1: u32 = wins_all
         .iter()
-        .map(|(win_num, num)| {
-            let points = num.intersection(win_num).count();
-            points.checked_sub(1).map_or(0, |v| 2_u32.pow(v as u32))
-        })
+        .copied()
+        .map(|wins| wins.checked_sub(1).map_or(0, |v| 2_u32.pow(v as u32)))
         .sum();
 
     // Part 2
     let mut num_copies: HashMap<usize, u32> = HashMap::new();
-    let part2: u32 = cards
+    let part2: u32 = wins_all
         .iter()
+        .copied()
         .enumerate()
-        .map(|(i, (win_num, num))| {
-            let points = num.intersection(win_num).count();
+        .map(|(i, wins)| {
             let count = num_copies.get(&i).copied().unwrap_or(1);
-            for j in 1..=points {
+            for j in 1..=wins {
                 num_copies
                     .entry(i + j)
                     .and_modify(|v| *v += count)
