@@ -1,8 +1,10 @@
+use std::str::FromStr;
+
 use nom::{
     bytes::complete::tag_no_case,
     character::complete::{self, digit1, line_ending, space0, space1},
-    combinator::opt,
-    multi::{many0, separated_list1},
+    combinator::{map_res, opt},
+    multi::{fold_many0, separated_list1},
     sequence::{delimited, preceded},
     IResult,
 };
@@ -32,36 +34,33 @@ pub(super) fn parse_races(input: &str) -> IResult<&str, Box<[Race]>> {
     ))
 }
 
-pub(super) fn parse_kerning_race(input: &str) -> IResult<&str, Race> {
-    let (input, time) = delimited(
-        tag_no_case("time:"),
-        many0(preceded(space1, digit1)),
-        line_ending,
-    )(input)?;
+/// Parses digits separated by zero or more spaces.
+///
+/// ```ignore
+/// assert_eq!(parse_spaced_digits::<u32>(" 12 345  6"), Ok(("", 123456)))
+/// ```
+pub(super) fn parse_spaced_digits<F: FromStr>(input: &str) -> IResult<&str, F> {
+    map_res(
+        fold_many0(
+            preceded(space1, digit1),
+            String::new,
+            |mut acc: String, digits: &str| {
+                acc.push_str(digits);
+                acc
+            },
+        ),
+        |v| v.parse::<F>(),
+    )(input)
+}
 
-    let time: u64 = time
-        .into_iter()
-        .fold(String::new(), |mut acc, s| {
-            acc.push_str(s);
-            acc
-        })
-        .parse()
-        .unwrap();
+pub(super) fn parse_kerning_race(input: &str) -> IResult<&str, Race> {
+    let (input, time) = delimited(tag_no_case("time:"), parse_spaced_digits, line_ending)(input)?;
 
     let (input, distance) = delimited(
         tag_no_case("distance:"),
-        many0(preceded(space1, digit1)),
+        parse_spaced_digits,
         opt(line_ending),
     )(input)?;
-
-    let distance: u64 = distance
-        .into_iter()
-        .fold(String::new(), |mut acc, s| {
-            acc.push_str(s);
-            acc
-        })
-        .parse()
-        .unwrap();
 
     Ok((input, Race { time, distance }))
 }

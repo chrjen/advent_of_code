@@ -13,13 +13,27 @@ struct Race {
 }
 
 impl Race {
+    /// Return total number of wins using direct calculation.
+    ///
+    /// Given a race with time `T` and distance `D`, The distance travelled
+    /// after holding the button `x` seconds can be described as `f(x) = x(T-x)`,
+    /// which again describes a parabola. We want to find for how many discreet
+    /// values of `x` the inequality `f(x) > D` holds. Using the quadratic
+    /// equation we can calculate the following inequality.
+    ///
+    /// `T - sqrt(T^2 - 4D) < x < T + sqrt(T^2 - 4D)`
+    ///
+    /// Applying the floor and ceiling functions and an extra +1.0 gives
+    /// discreet bounds that when subtracted gives number of possible ways we
+    /// can win.
     fn num_wins(&self) -> u64 {
         let time: f64 = self.time as f64;
         let distance: f64 = self.distance as f64;
+
         let lower_bound: u64 =
-            f64::ceil(0.5 * (time - f64::sqrt(time * time - 4.0 * distance)) + 0.0001) as u64;
+            f64::floor(0.5 * (time - f64::sqrt(time * time - 4.0 * distance)) + 1.0) as u64;
         let upper_bound: u64 =
-            f64::ceil(0.5 * (f64::sqrt(time * time - 4.0 * distance) + time)) as u64;
+            f64::ceil(0.5 * (time + f64::sqrt(time * time - 4.0 * distance))) as u64;
 
         upper_bound - lower_bound
     }
@@ -32,9 +46,9 @@ pub fn solve(input: &[u8]) -> (String, String) {
     let (_, races) = parse::parse_races(input.as_ref()).expect("should be valid input");
     let part1: u64 = races.iter().map(|v| v.num_wins()).product();
 
+    // Part 2
     let (_, race) = parse::parse_kerning_race(input.as_ref()).expect("should be valid input");
     let part2: u64 = race.num_wins();
-    dbg!(&race);
 
     (part1.to_string(), part2.to_string())
 }
