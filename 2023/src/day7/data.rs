@@ -7,15 +7,6 @@ pub struct Card(u8);
 impl Card {
     const JOKER: Card = Card(11);
 
-    #[allow(dead_code)]
-    pub fn new(value: u8) -> Result<Self, String> {
-        if !(2..=14).contains(&value) {
-            Err(format!("Value cannot be less 2 or greater than 14, got {value}").to_owned())
-        } else {
-            Ok(Card(value))
-        }
-    }
-
     pub const fn from_char(c: char) -> Result<Self, &'static str> {
         match c {
             'A' => Ok(Card(14)),
@@ -26,10 +17,6 @@ impl Card {
             '2'..='9' => Ok(Card(c as u8 - b'2' + 2)),
             _ => Err("Value cannot be anything but one of \"AKQJT98765432\""),
         }
-    }
-
-    pub const fn value(&self) -> u8 {
-        self.0
     }
 }
 
@@ -46,13 +33,13 @@ impl Display for Card {
 
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum HandRank {
-    HighCard,
-    OnePair,
-    TwoPair,
-    ThreeOfAKind,
-    FullHouse,
-    FourOfAKind,
-    FiveOfAKind,
+    FiveOfAKind = 6,
+    FourOfAKind = 5,
+    FullHouse = 4,
+    ThreeOfAKind = 3,
+    TwoPair = 2,
+    OnePair = 1,
+    HighCard = 0,
 }
 
 #[derive(Debug, PartialEq, Eq, Clone)]
@@ -89,45 +76,9 @@ impl Hand {
             _ => unreachable!("got impossible count of cards"),
         }
     }
-}
 
-impl PartialOrd for Hand {
-    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        Some(self.cmp(other))
-    }
-}
-
-impl Ord for Hand {
-    fn cmp(&self, other: &Self) -> Ordering {
-        let self_hand_rank = self.hand_rank();
-        let other_hand_rank = other.hand_rank();
-
-        if self_hand_rank != other_hand_rank {
-            return self_hand_rank.cmp(&other_hand_rank);
-        }
-
-        for (self_card, other_card) in self.cards.iter().zip(other.cards.iter()) {
-            match self_card.cmp(other_card) {
-                Ordering::Equal => continue,
-                Ordering::Less => return Ordering::Less,
-                Ordering::Greater => return Ordering::Greater,
-            }
-        }
-
-        Ordering::Equal
-    }
-}
-
-#[derive(Debug, PartialEq, Eq)]
-pub struct JokerHand(Hand);
-
-impl JokerHand {
-    pub fn hand(&self) -> &Hand {
-        &self.0
-    }
-
-    pub fn hand_rank(&self) -> HandRank {
-        let mut counts = self.0.cards.iter().counts();
+    pub fn hand_rank_joker(&self) -> HandRank {
+        let mut counts = self.cards.iter().counts();
         let num_jokers = counts.remove(&Card::JOKER).unwrap_or(0);
         let mut counts: Box<[_; 5]> = counts
             .into_values()
@@ -150,45 +101,43 @@ impl JokerHand {
             _ => unreachable!("got impossible count of cards"),
         }
     }
-}
 
-impl PartialOrd for JokerHand {
-    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        Some(self.cmp(other))
-    }
-}
+    pub fn cmp_cards(&self, other: &Self) -> Ordering {
+        let hand_rank: Ordering = self.hand_rank().cmp(&other.hand_rank());
 
-impl Ord for JokerHand {
-    fn cmp(&self, other: &Self) -> Ordering {
-        let self_hand_rank = self.hand_rank();
-        let other_hand_rank = other.hand_rank();
-
-        if self_hand_rank != other_hand_rank {
-            return self_hand_rank.cmp(&other_hand_rank);
+        if hand_rank == Ordering::Equal {
+            self.cards
+                .iter()
+                .zip(other.cards.iter())
+                .map(|(card_self, card_other)| card_self.cmp(card_other))
+                .find(|&ord| ord != Ordering::Equal)
+                .unwrap_or(Ordering::Equal)
+        } else {
+            hand_rank
         }
+    }
 
-        for (self_card, other_card) in self.0.cards.iter().zip(other.0.cards.iter()) {
-            let self_value: &u8 = match self_card {
+    pub fn cmp_cards_joker(&self, other: &Self) -> Ordering {
+        let hand_rank: Ordering = self.hand_rank_joker().cmp(&other.hand_rank_joker());
+
+        fn to_value(card: &Card) -> &u8 {
+            match card {
                 &Card::JOKER => &1,
                 Card(n) => n,
-            };
-            let other_value: &u8 = match other_card {
-                &Card::JOKER => &1,
-                Card(n) => n,
-            };
-            match self_value.cmp(other_value) {
-                Ordering::Equal => continue,
-                Ordering::Less => return Ordering::Less,
-                Ordering::Greater => return Ordering::Greater,
             }
         }
 
-        Ordering::Equal
-    }
-}
-
-impl From<Hand> for JokerHand {
-    fn from(hand: Hand) -> Self {
-        JokerHand(hand)
+        if hand_rank == Ordering::Equal {
+            let other_cards = other.cards.iter().map(to_value);
+            self.cards
+                .iter()
+                .map(to_value)
+                .zip(other_cards)
+                .map(|(value_self, value_other)| value_self.cmp(value_other))
+                .find(|&ord| ord != Ordering::Equal)
+                .unwrap_or(Ordering::Equal)
+        } else {
+            hand_rank
+        }
     }
 }

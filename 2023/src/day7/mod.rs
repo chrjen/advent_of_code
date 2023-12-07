@@ -1,5 +1,3 @@
-use itertools::Itertools;
-
 pub const SOLUTION: common::Solution = common::Solution {
     name: "Day 7: Camel Cards",
     input: std::include_bytes!("input"),
@@ -9,7 +7,7 @@ pub const SOLUTION: common::Solution = common::Solution {
 mod data;
 mod parse;
 
-use data::{Card, Hand, JokerHand};
+use data::{Card, Hand};
 
 pub fn solve(input: &[u8]) -> (String, String) {
     let input = String::from_utf8_lossy(input);
@@ -17,7 +15,7 @@ pub fn solve(input: &[u8]) -> (String, String) {
     let (_, mut hands) = parse::parse_hands(input.as_ref()).expect("valid input");
 
     // Part 1
-    hands.sort();
+    hands.sort_unstable_by(Hand::cmp_cards);
     let part1: u32 = hands
         .iter()
         .enumerate()
@@ -25,12 +23,11 @@ pub fn solve(input: &[u8]) -> (String, String) {
         .sum();
 
     // Part 2
+    hands.sort_unstable_by(Hand::cmp_cards_joker);
     let part2: u32 = hands
         .iter()
-        .map(|v| JokerHand::from(v.clone()))
-        .sorted()
         .enumerate()
-        .map(|(i, v)| (i as u32 + 1) * v.hand().bet)
+        .map(|(i, v)| (i as u32 + 1) * v.bet)
         .sum();
 
     (part1.to_string(), part2.to_string())
