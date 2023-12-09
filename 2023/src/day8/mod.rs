@@ -10,9 +10,6 @@ use num::integer::lcm;
 
 mod parse;
 
-const START_NODE: &str = "AAA";
-const TARGET_NODE: &str = "ZZZ";
-
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 enum Direction {
     Left,
@@ -46,23 +43,59 @@ struct Map<'a> {
 }
 
 pub fn solve(input: &[u8]) -> (String, String) {
-    _solve(input, false)
-}
-
-fn _solve(input: &[u8], part2_only: bool) -> (String, String) {
     let input = String::from_utf8_lossy(input);
 
     let (_, map) = parse::parse_map(input.as_ref()).expect("valid input");
 
-    // Part1
-    let mut count: usize = 0;
-    let mut next_node = START_NODE;
-    if !part2_only {
-        for instruction in map.instructions.iter().cycle() {
-            if next_node == TARGET_NODE {
-                break;
-            }
+    (solve_part1(&map, "AAA", "ZZZ"), solve_part2(&map))
+}
 
+pub fn _solve(input: &[u8], start: &str, target: &str) -> (String, String) {
+    let input = String::from_utf8_lossy(input);
+
+    let (_, map) = parse::parse_map(input.as_ref()).expect("valid input");
+
+    (solve_part1(&map, start, target), solve_part2(&map))
+}
+
+fn solve_part1(map: &Map, start: &str, target: &str) -> String {
+    let mut count: usize = 0;
+    let mut next_node = start;
+
+    for instruction in map.instructions.iter().cycle() {
+        if next_node == target {
+            break;
+        }
+
+        let node = map
+            .nodes
+            .get(next_node)
+            .expect("connected node should exist");
+
+        next_node = match *instruction {
+            Direction::Left => node.left,
+            Direction::Right => node.right,
+        };
+
+        count += 1;
+    }
+
+    count.to_string()
+}
+fn solve_part2(map: &Map) -> String {
+    let start_node_set: HashSet<&str> = map
+        .nodes
+        .keys()
+        .filter(|name| name.ends_with('A'))
+        .copied()
+        .collect();
+
+    let calc_cycle_lengths = |start: &&str| -> u64 {
+        let mut loop_count = 0;
+        let mut visited_nodes = HashMap::new();
+        let mut next_node = *start;
+
+        for (index, instruction) in map.instructions.iter().enumerate().cycle() {
             let node = map
                 .nodes
                 .get(next_node)
@@ -73,52 +106,23 @@ fn _solve(input: &[u8], part2_only: bool) -> (String, String) {
                 Direction::Right => node.right,
             };
 
-            count += 1;
-        }
-    }
-    let part1 = count;
+            loop_count += 1;
 
-    // Part 2
-    let start_node_set: HashSet<&str> = map
-        .nodes
-        .keys()
-        .filter(|name| name.ends_with('A'))
-        .copied()
-        .collect();
-
-    let cycle_length: Vec<u64> = start_node_set
-        .iter()
-        .map(|start| {
-            let mut loop_count = 0;
-            let mut visited_nodes = HashMap::new();
-            let mut next_node = *start;
-
-            for (index, instruction) in map.instructions.iter().enumerate().cycle() {
-                let node = map
-                    .nodes
-                    .get(next_node)
-                    .expect("connected node should exist");
-
-                next_node = match *instruction {
-                    Direction::Left => node.left,
-                    Direction::Right => node.right,
-                };
-
-                loop_count += 1;
-
-                if visited_nodes.contains_key(&(next_node, index)) {
-                    loop_count -= visited_nodes.get(&(next_node, index)).unwrap();
-                    break;
-                }
-                visited_nodes.insert((next_node, index), loop_count);
+            if visited_nodes.contains_key(&(next_node, index)) {
+                loop_count -= visited_nodes.get(&(next_node, index)).unwrap();
+                break;
             }
-            loop_count
-        })
-        .collect();
+            visited_nodes.insert((next_node, index), loop_count);
+        }
 
-    let part2 = cycle_length.iter().copied().fold(1, lcm);
+        loop_count
+    };
 
-    (part1.to_string(), part2.to_string())
+    start_node_set
+        .iter()
+        .map(calc_cycle_lengths)
+        .fold(1, lcm)
+        .to_string()
 }
 
 #[cfg(test)]
@@ -168,7 +172,7 @@ ZZZ = (ZZZ, ZZZ)",
 XXX = (XXX, XXX)"
             .as_bytes();
 
-        let (_, result) = _solve(input, true);
+        let (_, result) = _solve(input, "11A", "11Z");
         assert_eq!(result, "6")
     }
     solution!(p2, p2_solution, "13129439557681");
