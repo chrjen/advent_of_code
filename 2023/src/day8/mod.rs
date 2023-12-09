@@ -6,7 +6,7 @@ pub const SOLUTION: common::Solution = common::Solution {
 
 use std::collections::{HashMap, HashSet};
 
-use num::Integer;
+use num::integer::lcm;
 
 mod parse;
 
@@ -79,34 +79,21 @@ fn _solve(input: &[u8], part2_only: bool) -> (String, String) {
     let part1 = count;
 
     // Part 2
-    let start_node_set: HashSet<&str>;
-    let target_node_set: HashSet<&str>;
-
-    start_node_set = map
+    let start_node_set: HashSet<&str> = map
         .nodes
         .keys()
-        .filter(|name| name.ends_with("A"))
+        .filter(|name| name.ends_with('A'))
         .copied()
-        .collect();
-    target_node_set = map
-        .nodes
-        .keys()
-        .copied()
-        .filter(|name| name.ends_with("Z"))
         .collect();
 
-    let cycle_length: Vec<(u64, Vec<u64>)> = start_node_set
+    let cycle_length: Vec<u64> = start_node_set
         .iter()
         .map(|start| {
             let mut loop_count = 0;
-            let mut target_count = Vec::new();
             let mut visited_nodes = HashMap::new();
             let mut next_node = *start;
-            for (i, instruction) in map.instructions.iter().enumerate().cycle() {
-                if target_node_set.contains(next_node) {
-                    target_count.push(loop_count);
-                }
 
+            for (index, instruction) in map.instructions.iter().enumerate().cycle() {
                 let node = map
                     .nodes
                     .get(next_node)
@@ -119,20 +106,17 @@ fn _solve(input: &[u8], part2_only: bool) -> (String, String) {
 
                 loop_count += 1;
 
-                if visited_nodes.contains_key(&(next_node, i)) {
-                    loop_count -= visited_nodes.get(&(next_node, i)).unwrap();
+                if visited_nodes.contains_key(&(next_node, index)) {
+                    loop_count -= visited_nodes.get(&(next_node, index)).unwrap();
                     break;
                 }
-                visited_nodes.insert((next_node, i), loop_count);
+                visited_nodes.insert((next_node, index), loop_count);
             }
-            (loop_count, target_count)
+            loop_count
         })
         .collect();
 
-    let part2 = cycle_length
-        .iter()
-        .map(|(len, _)| len)
-        .fold(1, |acc, n| n.lcm(&acc));
+    let part2 = cycle_length.iter().copied().fold(1, lcm);
 
     (part1.to_string(), part2.to_string())
 }
