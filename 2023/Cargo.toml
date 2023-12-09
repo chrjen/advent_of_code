@@ -7,3 +7,4 @@ version = "0.1.0"
 common = {path = "../common"}
 itertools = "*"
 nom = "7"
+num = "*"
