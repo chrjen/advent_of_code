@@ -18,8 +18,8 @@ fn tiles(input: &str) -> IResult<&str, Vec<Tile>> {
     }))(input)
 }
 
-fn hints(input: &str) -> IResult<&str, Vec<u32>> {
-    separated_list1(complete::char(','), complete::u32)(input)
+fn hints(input: &str) -> IResult<&str, Vec<usize>> {
+    separated_list1(complete::char(','), complete::u64.map(|v| v as usize))(input)
 }
 
 pub(super) fn row(input: &str) -> IResult<&str, Row> {
