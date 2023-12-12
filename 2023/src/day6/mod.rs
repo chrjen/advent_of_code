@@ -6,6 +6,9 @@ pub const SOLUTION: common::Solution = common::Solution {
 
 mod parse;
 
+// Include this so doctest work.
+pub use parse::parse_spaced_digits;
+
 #[derive(Debug)]
 struct Race {
     time: u64,

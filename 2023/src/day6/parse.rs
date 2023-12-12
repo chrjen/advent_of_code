@@ -36,10 +36,11 @@ pub(super) fn parse_races(input: &str) -> IResult<&str, Box<[Race]>> {
 
 /// Parses digits separated by zero or more spaces.
 ///
-/// ```ignore
+/// ```
+/// use solutions_2023::day6::parse_spaced_digits;
 /// assert_eq!(parse_spaced_digits::<u32>(" 12 345  6"), Ok(("", 123456)))
 /// ```
-pub(super) fn parse_spaced_digits<F: FromStr>(input: &str) -> IResult<&str, F> {
+pub fn parse_spaced_digits<F: FromStr>(input: &str) -> IResult<&str, F> {
     map_res(
         fold_many0(
             preceded(space1, digit1),
