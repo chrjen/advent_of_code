@@ -1,4 +1,7 @@
-use std::{collections::HashSet, ops::RangeInclusive};
+use std::{
+    collections::{HashMap, HashSet},
+    ops::RangeInclusive,
+};
 
 use itertools::Itertools;
 
@@ -15,115 +18,108 @@ pub fn solve(input: &[u8]) -> (String, String) {
 
     let grounds = parse::parse_input(&input);
 
-    let mut part1 = 0;
-    for ground in grounds {
-        let (x_bound, y_bound) = get_bounds(ground.iter());
+    let part1: u32 = grounds.iter().map(summarise(0)).sum();
+    let part2: u32 = grounds.iter().map(summarise(1)).sum();
 
-        let vertical_candidates: Vec<_> = x_bound
-            .clone()
-            .tuple_windows()
-            .flat_map(|(x0, x1)| {
-                let col0 = y_bound
-                    .clone()
-                    .flat_map(|y| ground.get(&(x0, y)).map(|(_, y)| y))
-                    .collect::<Vec<_>>();
-                let col1 = y_bound
-                    .clone()
-                    .flat_map(|y| ground.get(&(x1, y)).map(|(_, y)| y))
-                    .collect::<Vec<_>>();
+    (part1.to_string(), part2.to_string())
+}
 
-                if col0 == col1 {
-                    Some(x1)
-                } else {
-                    None
-                }
-            })
-            .collect();
+fn summarise(smudges: usize) -> impl Fn(&HashSet<(u32, u32)>) -> u32 {
+    move |ground: &HashSet<(u32, u32)>| -> u32 {
+        let (mirror_x, mirror_y) = find_mirror(ground, smudges);
+        // _print_ground(&ground, (mirror_x.map(|x| x + 1), mirror_y.map(|y| y + 1)));
+        // println!();
+        mirror_x.unwrap_or(0) + mirror_y.map(|y| y * 100).unwrap_or(0)
+    }
+}
 
-        let horizontal_candidates: Vec<_> = y_bound
-            .clone()
-            .tuple_windows()
-            .flat_map(|(y0, y1)| {
-                let row0 = x_bound
-                    .clone()
-                    .flat_map(|x| ground.get(&(x, y0)).map(|(x, _)| x))
-                    .collect::<Vec<_>>();
-                let row1 = x_bound
-                    .clone()
-                    .flat_map(|x| ground.get(&(x, y1)).map(|(x, _)| x))
-                    .collect::<Vec<_>>();
+fn find_mirror(ground: &HashSet<(u32, u32)>, smudges: usize) -> (Option<u32>, Option<u32>) {
+    let (x_bound, y_bound) = get_bounds(ground.iter());
+    let empty_set = HashSet::new();
 
-                if row0 == row1 {
-                    Some(y1)
-                } else {
-                    None
-                }
-            })
-            .collect();
+    let cols: HashMap<u32, HashSet<_>> = ground
+        .iter()
+        .copied()
+        .sorted_by_key(|(x, _)| *x)
+        .group_by(|(x, _)| *x)
+        .into_iter()
+        .map(|(key, group)| (key, group.map(|(_, y)| y).collect()))
+        .collect();
 
-        for x in vertical_candidates {
-            // dbg!(x);
-            let is_mirror = (*x_bound.start()..x)
-                .rev()
-                .zip(x..=*x_bound.end())
-                .all(|(x0, x1)| {
-                    // dbg!((x0, x1));
-                    let col0 = y_bound
-                        .clone()
-                        .flat_map(|y| ground.get(&(x0, y)).map(|(_, y)| y))
-                        .collect::<Vec<_>>();
-                    let col1 = y_bound
-                        .clone()
-                        .flat_map(|y| ground.get(&(x1, y)).map(|(_, y)| y))
-                        .collect::<Vec<_>>();
+    let rows: HashMap<u32, HashSet<_>> = ground
+        .iter()
+        .copied()
+        .sorted_by_key(|(_, y)| *y)
+        .group_by(|(_, y)| *y)
+        .into_iter()
+        .map(|(key, group)| (key, group.map(|(x, _)| x).collect()))
+        .collect();
 
-                    col0 == col1
-                });
+    let count_difference_cols = |(x0, x1): (u32, u32)| -> usize {
+        let col0 = cols.get(&x0).unwrap_or(&empty_set);
+        let col1 = cols.get(&x1).unwrap_or(&empty_set);
+        col0.symmetric_difference(col1).count()
+    };
 
-            if is_mirror {
-                part1 += x - 1;
-                println!("Found mirror at x={}", x - 1);
-                _print_ground(&ground);
-                println!();
-                break;
-            }
-        }
+    let count_difference_rows = |(y0, y1): (u32, u32)| -> usize {
+        let row0 = rows.get(&y0).unwrap_or(&empty_set);
+        let row1 = rows.get(&y1).unwrap_or(&empty_set);
+        row0.symmetric_difference(row1).count()
+    };
 
-        for y in horizontal_candidates {
-            let is_mirror = (*y_bound.start()..y)
-                .rev()
-                .zip(y..=*y_bound.end())
-                .all(|(y0, y1)| {
-                    let row0 = x_bound
-                        .clone()
-                        .flat_map(|x| ground.get(&(x, y0)).map(|(x, _)| x))
-                        .collect::<Vec<_>>();
-                    let row1 = x_bound
-                        .clone()
-                        .flat_map(|x| ground.get(&(x, y1)).map(|(x, _)| x))
-                        .collect::<Vec<_>>();
+    let vertical_candidates: Vec<_> = x_bound
+        .clone()
+        .tuple_windows()
+        .flat_map(|(x0, x1)| (count_difference_cols((x0, x1)) <= smudges).then_some(x1))
+        .collect();
 
-                    row0 == row1
-                });
+    let horizontal_candidates: Vec<_> = y_bound
+        .clone()
+        .tuple_windows()
+        .flat_map(|(y0, y1)| (count_difference_rows((y0, y1)) <= smudges).then_some(y1))
+        .collect();
 
-            if is_mirror {
-                part1 += (y - 1) * 100;
-                println!("Found mirror at y={}", y - 1);
-                _print_ground(&ground);
-                println!();
-                break;
-            }
+    for x in vertical_candidates {
+        let smudge_count: usize = (*x_bound.start()..x)
+            .rev()
+            .zip(x..=*x_bound.end())
+            .map(count_difference_cols)
+            .sum();
+
+        if smudge_count == smudges {
+            return (Some(x - 1), None);
         }
     }
 
-    (part1.to_string(), 0.to_string())
+    for y in horizontal_candidates {
+        let smudge_count: usize = (*y_bound.start()..y)
+            .rev()
+            .zip(y..=*y_bound.end())
+            .map(count_difference_rows)
+            .sum();
+
+        if smudge_count == smudges {
+            return (None, Some(y - 1));
+        }
+    }
+
+    // No solution.
+    (None, None)
 }
 
-fn _print_ground(universe: &HashSet<(u32, u32)>) {
+fn _print_ground(universe: &HashSet<(u32, u32)>, mirror: (Option<u32>, Option<u32>)) {
     let (x_bound, y_bound) = get_bounds(universe.iter());
+    let (mirror_x, mirror_y) = mirror;
 
     for y in y_bound {
+        if mirror_y.is_some_and(|my| my == y) {
+            x_bound.clone().for_each(|_| print!("\x1b[33m─\x1b[0m"));
+            println!();
+        }
         for x in x_bound.clone() {
+            if mirror_x.is_some_and(|mx| mx == x) {
+                print!("\x1b[33m│\x1b[0m");
+            }
             let c = match universe.get(&(x, y)) {
                 Some(_) => '#',
                 None => '.',
@@ -176,10 +172,25 @@ mod tests {
     solution!(p1, p1_solution, "32371");
 
     // Part 2
-    // example!(p2, p2_example_1, "", "0");
-    // example!(p2, p2_example_2, "", "0");
-    // example!(p2, p2_example_3, "", "0");
-    // example!(p2, p2_example_4, "", "0");
-    // example!(p2, p2_example_5, "", "0");
-    // solution!(p2, p2_solution, "100");
+    example!(
+        p2,
+        p2_example_1,
+        "#.##..##.
+..#.##.#.
+##......#
+##......#
+..#.##.#.
+..##..##.
+#.#.##.#.
+
+#...##..#
+#....#..#
+..##..###
+#####.##.
+#####.##.
+..##..###
+#....#..#",
+        "400"
+    );
+    solution!(p2, p2_solution, "37416");
 }
