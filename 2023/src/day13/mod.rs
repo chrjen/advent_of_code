@@ -34,77 +34,60 @@ fn summarise(smudges: usize) -> impl Fn(&HashSet<(u32, u32)>) -> u32 {
 }
 
 fn find_mirror(ground: &HashSet<(u32, u32)>, smudges: usize) -> (Option<u32>, Option<u32>) {
+    fn find(
+        it: impl Iterator<Item = (u32, u32)>,
+        smudges: usize,
+        bound: RangeInclusive<u32>,
+    ) -> Option<u32> {
+        let empty_set = HashSet::new();
+
+        let sets: HashMap<u32, HashSet<_>> = it
+            .sorted_by_key(|(u, _)| *u)
+            .group_by(|(u, _)| *u)
+            .into_iter()
+            .map(|(key, group)| (key, group.map(|(_, v)| v).collect()))
+            .collect();
+
+        let count_difference_sets = |(v0, v1): (u32, u32)| -> usize {
+            let set0 = sets.get(&v0).unwrap_or(&empty_set);
+            let set1 = sets.get(&v1).unwrap_or(&empty_set);
+            set0.symmetric_difference(set1).count()
+        };
+
+        let candidates: Vec<_> = bound
+            .clone()
+            .tuple_windows()
+            .flat_map(|(v0, v1)| (count_difference_sets((v0, v1)) <= smudges).then_some(v1))
+            .collect();
+
+        for v in candidates {
+            let smudge_count: usize = (*bound.start()..v)
+                .rev()
+                .zip(v..=*bound.end())
+                .map(count_difference_sets)
+                .sum();
+
+            if smudge_count == smudges {
+                return Some(v - 1);
+            }
+        }
+
+        None
+    }
+
     let (x_bound, y_bound) = get_bounds(ground.iter());
-    let empty_set = HashSet::new();
 
-    let cols: HashMap<u32, HashSet<_>> = ground
-        .iter()
-        .copied()
-        .sorted_by_key(|(x, _)| *x)
-        .group_by(|(x, _)| *x)
-        .into_iter()
-        .map(|(key, group)| (key, group.map(|(_, y)| y).collect()))
-        .collect();
+    // Calls `find()` on columns first, then rows. (x, y) is simply swapped when
+    // doing the rows to keep as much logic as possible the same. `find()` is
+    // the real implementation.
+    let mirror_x = find(ground.iter().copied(), smudges, x_bound);
+    let mirror_y = find(
+        ground.iter().copied().map(|(x, y)| (y, x)),
+        smudges,
+        y_bound,
+    );
 
-    let rows: HashMap<u32, HashSet<_>> = ground
-        .iter()
-        .copied()
-        .sorted_by_key(|(_, y)| *y)
-        .group_by(|(_, y)| *y)
-        .into_iter()
-        .map(|(key, group)| (key, group.map(|(x, _)| x).collect()))
-        .collect();
-
-    let count_difference_cols = |(x0, x1): (u32, u32)| -> usize {
-        let col0 = cols.get(&x0).unwrap_or(&empty_set);
-        let col1 = cols.get(&x1).unwrap_or(&empty_set);
-        col0.symmetric_difference(col1).count()
-    };
-
-    let count_difference_rows = |(y0, y1): (u32, u32)| -> usize {
-        let row0 = rows.get(&y0).unwrap_or(&empty_set);
-        let row1 = rows.get(&y1).unwrap_or(&empty_set);
-        row0.symmetric_difference(row1).count()
-    };
-
-    let vertical_candidates: Vec<_> = x_bound
-        .clone()
-        .tuple_windows()
-        .flat_map(|(x0, x1)| (count_difference_cols((x0, x1)) <= smudges).then_some(x1))
-        .collect();
-
-    let horizontal_candidates: Vec<_> = y_bound
-        .clone()
-        .tuple_windows()
-        .flat_map(|(y0, y1)| (count_difference_rows((y0, y1)) <= smudges).then_some(y1))
-        .collect();
-
-    for x in vertical_candidates {
-        let smudge_count: usize = (*x_bound.start()..x)
-            .rev()
-            .zip(x..=*x_bound.end())
-            .map(count_difference_cols)
-            .sum();
-
-        if smudge_count == smudges {
-            return (Some(x - 1), None);
-        }
-    }
-
-    for y in horizontal_candidates {
-        let smudge_count: usize = (*y_bound.start()..y)
-            .rev()
-            .zip(y..=*y_bound.end())
-            .map(count_difference_rows)
-            .sum();
-
-        if smudge_count == smudges {
-            return (None, Some(y - 1));
-        }
-    }
-
-    // No solution.
-    (None, None)
+    (mirror_x, mirror_y)
 }
 
 fn _print_ground(universe: &HashSet<(u32, u32)>, mirror: (Option<u32>, Option<u32>)) {
