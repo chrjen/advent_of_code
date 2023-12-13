@@ -1,7 +1,6 @@
 use nom::{
     character::complete::{self, line_ending, one_of, space1},
-    combinator::{all_consuming, map, map_res, opt},
-    error,
+    combinator::{all_consuming, map, map_res},
     multi::{many0, many1, separated_list1},
     sequence::{separated_pair, terminated},
     Err, IResult, Parser,

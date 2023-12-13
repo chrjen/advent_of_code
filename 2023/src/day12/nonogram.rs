@@ -1,22 +1,13 @@
-use std::{cmp::Ordering, fmt::Display};
+use std::{collections::HashMap, fmt::Display};
 
-use itertools::Itertools;
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum Tile {
     Fill,
     Cross,
     Empty,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Status {
-    Valid,
-    Invalid,
-    Unknown,
-}
-
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct Row {
     pub tiles: Vec<Tile>,
     pub hints: Vec<usize>,
@@ -25,114 +16,80 @@ pub struct Row {
 pub static mut COUNT: usize = 0;
 
 impl Row {
-    pub fn is_valid(&self) -> Status {
-        let pattern = self
-            .tiles
-            .iter()
-            .copied()
-            .dedup_with_count()
-            .filter_map(|(count, tile)| {
-                if tile == Tile::Fill {
-                    Some(count)
-                } else {
-                    None
-                }
-            })
-            .collect::<Vec<_>>();
+    pub fn unfold(&mut self) {
+        self.hints = self.hints.repeat(5);
 
-        if pattern.is_empty() {
-            return Status::Unknown;
-        }
+        self.tiles.reserve(5 * self.tiles.len());
+        let tiles = self.tiles.clone();
 
-        match pattern.len().cmp(&self.hints.len()) {
-            Ordering::Less => {
-                // println!("GOT LESS");
-                for hint_window in self.hints.windows(pattern.len()) {
-                    // println!("hint: {:?} vs. {:?}", hint_window, pattern);
-                    match pattern.as_slice().cmp(hint_window) {
-                        Ordering::Less => return Status::Unknown,
-                        Ordering::Equal => return Status::Unknown,
-                        Ordering::Greater => continue,
-                    }
-                }
-                return Status::Invalid;
-            }
-            Ordering::Equal => {
-                // println!("GOT EQUAL");
-                return match pattern.cmp(&self.hints) {
-                    Ordering::Less => Status::Unknown,
-                    Ordering::Equal => Status::Valid,
-                    Ordering::Greater => {
-                        let total_fill: usize = self.hints.iter().sum();
-                        let fill: usize = pattern.iter().sum();
-                        if fill <= total_fill {
-                            return Status::Unknown;
-                        } else {
-                            return Status::Invalid;
-                        }
-                    }
-                };
-            }
-            Ordering::Greater => {
-                // println!("GOT GREATER");
-                let total_fill: usize = self.hints.iter().sum();
-                let fill: usize = pattern.iter().sum();
-                if fill <= total_fill {
-                    return Status::Unknown;
-                } else {
-                    return Status::Invalid;
-                }
+        for _ in 0..4 {
+            self.tiles.push(Tile::Empty);
+            for &tile in tiles.iter() {
+                self.tiles.push(tile);
             }
         }
-
-        // for pair in pattern.zip_longest(self.hints.iter().copied()) {
-        //     match dbg!(pair) {
-        //         itertools::EitherOrBoth::Both(pattern, hint) => match pattern.cmp(&(hint as usize))
-        //         {
-        //             std::cmp::Ordering::Less => return Status::Unknown,
-        //             std::cmp::Ordering::Equal => continue,
-        //             std::cmp::Ordering::Greater => return Status::Invalid,
-        //         },
-        //         itertools::EitherOrBoth::Left(_) => return Status::Invalid,
-        //         itertools::EitherOrBoth::Right(_) => return Status::Unknown,
-        //     }
-        // }
     }
 
-    pub fn unfold(&mut self, times: usize) {
-        self.tiles = self.tiles.repeat(times);
-    }
-
-    pub fn count_combinations(&self) -> usize {
+    pub fn count_combinations(&self, cache: &mut HashMap<Row, usize>) -> usize {
         unsafe {
             COUNT += 1;
         }
 
-        println!("\x1b[36m{self}\x1b[0m");
+        let mut sum = 0;
+        let mut hints = self.hints.clone();
 
-        // match dbg!(self.is_valid()) {
-        match self.is_valid() {
-            Status::Valid => 1,
-            Status::Invalid => 0,
-            Status::Unknown => {
-                if let Some(index) = self
-                    .tiles
-                    .iter()
-                    .copied()
-                    .position(|tile| tile == Tile::Empty)
-                {
-                    let mut with_fill = self.clone();
-                    let mut with_cross = self.clone();
-
-                    with_fill.tiles[index] = Tile::Fill;
-                    with_cross.tiles[index] = Tile::Cross;
-
-                    with_fill.count_combinations() + with_cross.count_combinations()
-                } else {
-                    0
-                }
+        if hints.is_empty() {
+            if self.tiles.iter().any(|tile| *tile == Tile::Fill) {
+                return 0;
+            } else {
+                return 1;
             }
         }
+
+        let size = hints.pop().unwrap();
+
+        if self.tiles.is_empty() {
+            return 0;
+        }
+
+        for i in 0..=self.tiles.len() {
+            let mut tiles_it = self.tiles.iter().rev();
+
+            if self.tiles.len().checked_sub(size + i).is_none() {
+                break;
+            }
+
+            if tiles_it.by_ref().take(i).any(|tile| *tile == Tile::Fill) {
+                break;
+            }
+
+            if tiles_it
+                .by_ref()
+                .take(size)
+                .any(|tile| *tile == Tile::Cross)
+            {
+                continue;
+            }
+
+            if matches!(tiles_it.next(), Some(Tile::Fill)) {
+                continue;
+            }
+
+            let row = Row {
+                hints: hints.clone(),
+                tiles: tiles_it.rev().copied().collect(),
+            };
+
+            if let Some(count) = cache.get(&row) {
+                sum += count;
+            } else {
+                let count = row.count_combinations(cache);
+                cache.insert(row, count);
+                sum += count;
+            }
+        }
+
+        sum
     }
 }
 
