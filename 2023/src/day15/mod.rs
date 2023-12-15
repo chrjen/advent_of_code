@@ -4,42 +4,64 @@ pub const SOLUTION: common::Solution = common::Solution {
     solve: self::solve,
 };
 
-#[derive(Debug, Clone, Copy)]
-struct Hasher {
-    value: u32,
-}
+mod data;
+mod parse;
 
-impl Hasher {
-    fn new() -> Self {
-        Hasher { value: 0 }
-    }
-
-    fn hash(&mut self, c: char) {
-        self.value += c as u32;
-        self.value *= 17;
-        self.value %= 256;
-    }
-}
+use data::Hasher;
 
 pub fn solve(input: &[u8]) -> (String, String) {
     let input = String::from_utf8_lossy(input);
 
     // Part 1
-    let part1: u32 = input
-        .split(',')
-        .map(|seq| {
-            let mut hasher = Hasher::new();
-            for c in seq.chars() {
-                match c {
-                    '\n' => {}
-                    c => hasher.hash(c),
-                }
+    let part1: u32 = input.split(',').map(Hasher::hash_str).sum();
+
+    // Part 2
+    let steps = parse::parse_steps(&input).expect("input should be valid").1;
+    let mut boxes: Box<[Vec<(&str, u8)>]> = vec![Vec::new(); 256].into_boxed_slice();
+
+    // Do all the steps, modifying the boxes and any lenses inside.
+    for step in steps.iter() {
+        let box_idx = Hasher::hash_str(step.label) as usize;
+
+        let label_idx = boxes[box_idx]
+            .iter()
+            .enumerate()
+            .find(|(_, (label, _))| *label == step.label);
+
+        match (step.op, label_idx) {
+            (data::Operation::Dash, Some((label_idx, _))) => {
+                boxes[box_idx].remove(label_idx);
             }
-            hasher.value
+            (data::Operation::Dash, None) => {}
+            (data::Operation::Equal(focal_len), Some((label_idx, _))) => {
+                boxes[box_idx][label_idx].1 = focal_len;
+            }
+            (data::Operation::Equal(focal_len), None) => {
+                boxes[box_idx].push((step.label, focal_len));
+            }
+        }
+
+        // println!("After \"{step}\":");
+        // for (i, b) in boxes.iter().enumerate().filter(|(_, v)| !v.is_empty()) {
+        //     print!("Box {i}:");
+        //     for (label, focal_len) in b {
+        //         print!(" [{label} {focal_len}]");
+        //     }
+        //     println!();
+        // }
+        // println!();
+    }
+
+    let part2: u32 = boxes
+        .iter()
+        .enumerate()
+        .flat_map(|(box_idx, v)| std::iter::repeat(box_idx).zip(v.iter().enumerate()))
+        .map(|(box_idx, (slot_idx, (_, focal_len)))| {
+            (box_idx as u32 + 1) * (slot_idx as u32 + 1) * (*focal_len as u32)
         })
         .sum();
 
-    (part1.to_string(), 0.to_string())
+    (part1.to_string(), part2.to_string())
 }
 
 #[cfg(test)]
@@ -57,10 +79,11 @@ mod tests {
     solution!(p1, p1_solution, "514394");
 
     // Part 2
-    // example!(p2, p2_example_1, "", "0");
-    // example!(p2, p2_example_2, "", "0");
-    // example!(p2, p2_example_3, "", "0");
-    // example!(p2, p2_example_4, "", "0");
-    // example!(p2, p2_example_5, "", "0");
-    // solution!(p2, p2_solution, "100");
+    example!(
+        p2,
+        p2_example_1,
+        "rn=1,cm-,qp=3,cm=2,qp-,pc=4,ot=9,ab=5,pc-,pc=6,ot=7",
+        "145"
+    );
+    solution!(p2, p2_solution, "236358");
 }
