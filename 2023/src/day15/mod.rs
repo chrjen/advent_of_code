@@ -25,15 +25,14 @@ pub fn solve(input: &[u8]) -> (String, String) {
 
         let label_idx = boxes[box_idx]
             .iter()
-            .enumerate()
-            .find(|(_, (label, _))| *label == step.label);
+            .position(|(label, _)| *label == step.label);
 
         match (step.op, label_idx) {
-            (data::Operation::Dash, Some((label_idx, _))) => {
+            (data::Operation::Dash, Some(label_idx)) => {
                 boxes[box_idx].remove(label_idx);
             }
             (data::Operation::Dash, None) => {}
-            (data::Operation::Equal(focal_len), Some((label_idx, _))) => {
+            (data::Operation::Equal(focal_len), Some(label_idx)) => {
                 boxes[box_idx][label_idx].1 = focal_len;
             }
             (data::Operation::Equal(focal_len), None) => {
@@ -52,14 +51,12 @@ pub fn solve(input: &[u8]) -> (String, String) {
         // println!();
     }
 
-    let part2: u32 = boxes
-        .iter()
-        .enumerate()
-        .flat_map(|(box_idx, v)| std::iter::repeat(box_idx).zip(v.iter().enumerate()))
-        .map(|(box_idx, (slot_idx, (_, focal_len)))| {
-            (box_idx as u32 + 1) * (slot_idx as u32 + 1) * (*focal_len as u32)
-        })
-        .sum();
+    let mut part2: usize = 0;
+    for (box_idx, slots) in boxes.iter().enumerate() {
+        for (slot_idx, (_, focal_len)) in slots.iter().enumerate() {
+            part2 += (box_idx + 1) * (slot_idx + 1) * (*focal_len as usize);
+        }
+    }
 
     (part1.to_string(), part2.to_string())
 }
