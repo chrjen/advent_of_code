@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-pub const SOLUTION: common::Solution = common::Solution {
+pub const SOLUTION: common::Solver = common::Solver {
     name: "Day 5: Doesn't He Have Intern-Elves For This?",
     input: std::include_bytes!("input"),
     solve: self::solve,

@@ -2,7 +2,7 @@ mod keypad;
 
 use keypad::*;
 
-pub const SOLUTION: common::Solution = common::Solution {
+pub const SOLUTION: common::Solver = common::Solver {
     name: "Day 2: Bathroom Security",
     input: std::include_bytes!("input"),
     solve: self::solve,

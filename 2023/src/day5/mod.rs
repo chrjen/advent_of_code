@@ -1,7 +1,7 @@
 use itertools::Itertools;
 use std::{collections::HashMap, ops::Range};
 
-pub const SOLUTION: common::Solution = common::Solution {
+pub const SOLUTION: common::Solver = common::Solver {
     name: "Day 5: If You Give A Seed A Fertilizer",
     input: std::include_bytes!("input"),
     solve: self::solve,

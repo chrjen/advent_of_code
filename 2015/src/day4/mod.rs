@@ -1,4 +1,4 @@
-pub const SOLUTION: common::Solution = common::Solution {
+pub const SOLUTION: common::Solver = common::Solver {
     name: "Day 4: The Ideal Stocking Stuffer",
     input: std::include_bytes!("input"),
     solve: self::solve,

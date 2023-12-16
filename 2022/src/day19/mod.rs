@@ -2,7 +2,7 @@ use std::sync::{atomic::AtomicU32, Arc};
 
 mod parse;
 
-pub const SOLUTION: common::Solution = common::Solution {
+pub const SOLUTION: common::Solver = common::Solver {
     name: "Day 19: Not Enough Minerals",
     input: std::include_bytes!("input"),
     solve: self::solve,

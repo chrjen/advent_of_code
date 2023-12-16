@@ -3,7 +3,7 @@ use std::{
     rc::{Rc, Weak},
 };
 
-pub const SOLUTION: common::Solution = common::Solution {
+pub const SOLUTION: common::Solver = common::Solver {
     name: "Day 7: No Space Left On Device",
     input: std::include_bytes!("input"),
     solve: self::solve,

@@ -1,6 +1,6 @@
 use serde_json::Value;
 
-pub const SOLUTION: common::Solution = common::Solution {
+pub const SOLUTION: common::Solver = common::Solver {
     name: "Day 12: JSAbacusFramework.io",
     input: std::include_bytes!("input"),
     solve: self::solve,

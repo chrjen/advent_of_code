@@ -12,7 +12,7 @@ use std::path::PathBuf;
 use std::process::exit;
 
 use clap::Parser;
-use common::Solution;
+use common::Solver;
 use crossterm::execute;
 use crossterm::style::{Color, SetForegroundColor};
 
@@ -23,7 +23,7 @@ use solutions_2023 as s23;
 
 const ALL_YEARS: [u32; 4] = [2015, 2016, 2022, 2023];
 
-fn solutions_for_year(year: u32) -> Option<&'static [Option<Solution<'static>>]> {
+fn solutions_for_year(year: u32) -> Option<&'static [Option<Solver<'static>>]> {
     match year {
         2015 => Some(s15::SOLUTIONS),
         2016 => Some(s16::SOLUTIONS),
@@ -78,7 +78,7 @@ fn run_specific_year(year: u32, day: Option<u32>, input: Option<PathBuf>) {
     }
 }
 
-fn run_specific_day(solutions: &[Option<Solution>], day: u32, path: Option<PathBuf>) -> ! {
+fn run_specific_day(solutions: &[Option<Solver>], day: u32, path: Option<PathBuf>) -> ! {
     let idx = (day - 1) as usize;
 
     if (0..solutions.len()).contains(&idx) && solutions[idx].is_some() {
@@ -120,11 +120,11 @@ fn run_specific_day(solutions: &[Option<Solution>], day: u32, path: Option<PathB
     }
 }
 
-fn println_solution(solution: &Solution) {
+fn println_solution(solution: &Solver) {
     println_solution_with_input(solution, solution.input);
 }
 
-fn println_solution_with_input(solution: &Solution, input: &[u8]) {
+fn println_solution_with_input(solution: &Solver, input: &[u8]) {
     let mut stdout = io::stdout();
 
     let (part1, part2) = (solution.solve)(input);

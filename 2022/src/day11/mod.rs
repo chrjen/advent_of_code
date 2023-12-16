@@ -3,7 +3,7 @@ use std::{collections::VecDeque, fmt::Debug};
 use num::Integer;
 use regex::Regex;
 
-pub const SOLUTION: common::Solution = common::Solution {
+pub const SOLUTION: common::Solver = common::Solver {
     name: "Day 11: Monkey in the Middle",
     input: std::include_bytes!("input"),
     solve: self::solve,

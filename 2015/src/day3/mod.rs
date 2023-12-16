@@ -7,7 +7,7 @@ struct House {
     y: i16,
 }
 
-pub const SOLUTION: common::Solution = common::Solution {
+pub const SOLUTION: common::Solver = common::Solver {
     name: "Day 3: Perfectly Spherical Houses in a Vacuum",
     input: std::include_bytes!("input"),
     solve: self::solve,

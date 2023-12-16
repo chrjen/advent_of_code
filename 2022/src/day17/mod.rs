@@ -4,7 +4,7 @@ use std::collections::HashMap;
 
 use data::*;
 
-pub const SOLUTION: common::Solution = common::Solution {
+pub const SOLUTION: common::Solver = common::Solver {
     name: "Day 17: Pyroclastic Flow",
     input: std::include_bytes!("input"),
     solve: self::solve,

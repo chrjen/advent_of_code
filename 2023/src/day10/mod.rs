@@ -3,7 +3,7 @@ use std::{
     ops::RangeInclusive,
 };
 
-pub const SOLUTION: common::Solution = common::Solution {
+pub const SOLUTION: common::Solver = common::Solver {
     name: "Day 10: Pipe Maze",
     input: std::include_bytes!("input"),
     solve: self::solve,

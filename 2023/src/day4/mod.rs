@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-pub const SOLUTION: common::Solution = common::Solution {
+pub const SOLUTION: common::Solver = common::Solver {
     name: "Day 4: Scratchcards",
     input: std::include_bytes!("input"),
     solve: self::solve,

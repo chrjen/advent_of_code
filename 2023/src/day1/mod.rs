@@ -2,7 +2,7 @@ use std::fmt::Debug;
 
 use self::parse::{parse_alphanumeric_digit0, parse_digit0};
 
-pub const SOLUTION: common::Solution = common::Solution {
+pub const SOLUTION: common::Solver = common::Solver {
     name: "Day 1: Trebuchet?!",
     input: std::include_bytes!("input"),
     solve: self::solve,

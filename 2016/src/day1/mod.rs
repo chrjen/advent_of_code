@@ -2,7 +2,7 @@ use std::collections::HashSet;
 
 use regex::Regex;
 
-pub const SOLUTION: common::Solution = common::Solution {
+pub const SOLUTION: common::Solver = common::Solver {
     name: "Day 1: No Time for a Taxicab",
     input: std::include_bytes!("input"),
     solve: self::solve,

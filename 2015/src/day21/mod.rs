@@ -1,6 +1,6 @@
 use regex::Regex;
 
-pub const SOLUTION: common::Solution = common::Solution {
+pub const SOLUTION: common::Solver = common::Solver {
     name: "Day 21: RPG Simulator 20XX",
     input: std::include_bytes!("input"),
     solve: self::solve,

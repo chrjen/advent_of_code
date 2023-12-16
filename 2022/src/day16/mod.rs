@@ -9,7 +9,7 @@ use std::collections::{HashMap, VecDeque};
 
 use data::*;
 
-pub const SOLUTION: common::Solution = common::Solution {
+pub const SOLUTION: common::Solver = common::Solver {
     name: "Day 16: Proboscidea Volcanium",
     input: std::include_bytes!("input"),
     solve: self::solve,

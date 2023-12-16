@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use crate::day7::tokens::BinaryOp;
 
-pub const SOLUTION: common::Solution = common::Solution {
+pub const SOLUTION: common::Solver = common::Solver {
     name: "Day 7: Some Assembly Required",
     input: std::include_bytes!("input"),
     solve: self::solve,

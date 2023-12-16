@@ -5,7 +5,7 @@ use std::{
 
 use itertools::Itertools;
 
-pub const SOLUTION: common::Solution = common::Solution {
+pub const SOLUTION: common::Solver = common::Solver {
     name: "Day 13: Point of Incidence",
     input: std::include_bytes!("input"),
     solve: self::solve,
