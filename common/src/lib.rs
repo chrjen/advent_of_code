@@ -6,6 +6,18 @@ pub struct Solver<'a> {
     pub solve: fn(&[u8]) -> (String, String),
 }
 
+pub struct SolverV2<'a, T, U> {
+    pub name: &'a str,
+    pub input: &'a [u8],
+    pub solve: fn(&[u8]) -> (T, U),
+}
+
+impl<'a, T, U> SolverV2<'a, T, U> {
+    fn get_part1(&self, input: &[u8]) -> T {
+        (self.solve)(input).0
+    }
+}
+
 pub fn from_option<T: Display>(value: Option<T>) -> String {
     match value {
         Some(x) => format!("{}", x),

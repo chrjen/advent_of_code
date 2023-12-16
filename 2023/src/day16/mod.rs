@@ -1,4 +1,4 @@
-pub const SOLUTION: common::Solver = common::Solver {
+pub const SOLUTION: common::SolverV2<usize, usize> = common::SolverV2 {
     name: "Day 16: The Floor Will Be Lava",
     input: std::include_bytes!("input"),
     solve: self::solve,
@@ -13,7 +13,7 @@ use rayon::prelude::*;
 
 use self::data::{Contraption, Direction, Mirror};
 
-pub fn solve(input: &[u8]) -> (String, String) {
+pub fn solve(input: &[u8]) -> (usize, usize) {
     let input = String::from_utf8_lossy(input);
 
     // Part 1
@@ -54,7 +54,7 @@ pub fn solve(input: &[u8]) -> (String, String) {
         .max()
         .expect("should return at least one value");
 
-    (part1.to_string(), part2.to_string())
+    (part1, part2)
 }
 
 fn _print_contraption(ctt: &Contraption) {

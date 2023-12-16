@@ -31,7 +31,7 @@ pub const SOLUTIONS: &[Option<common::Solver>] = &[
     Some(day13::SOLUTION),
     Some(day14::SOLUTION),
     Some(day15::SOLUTION),
-    Some(day16::SOLUTION),
+    None,
     None,
     None,
     None,
@@ -42,3 +42,5 @@ pub const SOLUTIONS: &[Option<common::Solver>] = &[
     None,
     None,
 ];
+
+pub static SOLUTIONS_V2: &[&common::SolverV2] = &[day16::SOLUTION];
