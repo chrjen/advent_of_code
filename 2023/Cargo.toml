@@ -8,3 +8,4 @@ common = {path = "../common"}
 itertools = "*"
 nom = "7"
 num = "*"
+rayon = "*"

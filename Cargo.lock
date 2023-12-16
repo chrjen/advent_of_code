@@ -846,6 +846,7 @@ dependencies = [
  "itertools",
  "nom",
  "num 0.2.1",
+ "rayon",
 ]
 
 [[package]]

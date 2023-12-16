@@ -19,23 +19,15 @@ pub enum Mirror {
 
 impl Mirror {
     pub fn reflect_dir(&self, dir: &Direction) -> (Direction, Option<Direction>) {
+        use Direction as Dir;
         match (dir, self) {
-            (Direction::North, Mirror::Left) => (Direction::West, None),
-            (Direction::North, Mirror::Right) => (Direction::East, None),
-            (Direction::West, Mirror::Left) => (Direction::North, None),
-            (Direction::West, Mirror::Right) => (Direction::South, None),
-            (Direction::South, Mirror::Left) => (Direction::East, None),
-            (Direction::South, Mirror::Right) => (Direction::West, None),
-            (Direction::East, Mirror::Left) => (Direction::South, None),
-            (Direction::East, Mirror::Right) => (Direction::North, None),
-            (Direction::North, Mirror::SplitV) => (Direction::North, None),
-            (Direction::North, Mirror::SplitH) => (Direction::West, Some(Direction::East)),
-            (Direction::West, Mirror::SplitV) => (Direction::North, Some(Direction::South)),
-            (Direction::West, Mirror::SplitH) => (Direction::West, None),
-            (Direction::South, Mirror::SplitV) => (Direction::South, None),
-            (Direction::South, Mirror::SplitH) => (Direction::West, Some(Direction::East)),
-            (Direction::East, Mirror::SplitV) => (Direction::North, Some(Direction::South)),
-            (Direction::East, Mirror::SplitH) => (Direction::East, None),
+            (Dir::North | Dir::South, Mirror::Left) => (dir.ccw(), None),
+            (Dir::West | Dir::East, Mirror::Left) => (dir.cw(), None),
+            (Dir::North | Dir::South, Mirror::Right) => (dir.cw(), None),
+            (Dir::West | Dir::East, Mirror::Right) => (dir.ccw(), None),
+            (Dir::North | Dir::South, Mirror::SplitV) => (*dir, None),
+            (Dir::West | Dir::East, Mirror::SplitH) => (*dir, None),
+            (_, Mirror::SplitH | Mirror::SplitV) => (dir.ccw(), Some(dir.cw())),
         }
     }
 }
@@ -58,6 +50,26 @@ impl Direction {
             Direction::East => (x + 1, y),
         }
     }
+
+    /// Returns the direction 90-degrees counterclockwise to this one.
+    pub fn ccw(&self) -> Self {
+        match self {
+            Direction::North => Direction::West,
+            Direction::West => Direction::South,
+            Direction::South => Direction::East,
+            Direction::East => Direction::North,
+        }
+    }
+
+    /// Returns the direction 90-degrees clockwise to this one.
+    pub fn cw(&self) -> Self {
+        match self {
+            Direction::North => Direction::East,
+            Direction::West => Direction::North,
+            Direction::South => Direction::West,
+            Direction::East => Direction::South,
+        }
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -77,46 +89,28 @@ impl Contraption {
         let mut visited = HashSet::new();
 
         while let Some((coord, dir)) = next.pop() {
-            if !visited.insert((coord, dir)) {
+            if !self.is_within_bounds(&coord) || !visited.insert((coord, dir)) {
                 continue;
             }
 
-            if coord == (1, 8) {
-                let _x = 0;
-            }
+            // Move in the direction and possibly add to next.
+            let mut move_in = |new_dir: Direction| {
+                let new_coord = new_dir.offset_1(coord);
+                next.push((new_coord, new_dir));
+            };
 
             if let Some(mirror) = self.mirrors.get(&coord) {
                 match mirror.reflect_dir(&dir) {
                     (new_dir, Some(other_dir)) => {
-                        let new_coord = new_dir.offset_1(coord);
-                        if self.is_within_bounds(&new_coord)
-                            && !visited.contains(&(new_coord, new_dir))
-                        {
-                            next.push((new_coord, new_dir));
-                        }
-
-                        let new_coord = other_dir.offset_1(coord);
-                        if self.is_within_bounds(&new_coord)
-                            && !visited.contains(&(new_coord, other_dir))
-                        {
-                            next.push((new_coord, other_dir));
-                        }
+                        move_in(new_dir);
+                        move_in(other_dir);
                     }
                     (new_dir, None) => {
-                        let new_coord = new_dir.offset_1(coord);
-                        if self.is_within_bounds(&new_coord)
-                            && !visited.contains(&(new_coord, new_dir))
-                        {
-                            next.push((new_coord, new_dir));
-                        }
+                        move_in(new_dir);
                     }
                 }
             } else {
-                let new_dir = dir;
-                let new_coord = dir.offset_1(coord);
-                if self.is_within_bounds(&new_coord) && !visited.contains(&(new_coord, new_dir)) {
-                    next.push((new_coord, new_dir));
-                }
+                move_in(dir);
             }
         }
 

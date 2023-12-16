@@ -7,9 +7,11 @@ pub const SOLUTION: common::Solution = common::Solution {
 mod data;
 mod parse;
 
-use crate::day16::data::Direction;
+use std::collections::HashMap;
 
-use self::data::{Contraption, Mirror};
+use rayon::prelude::*;
+
+use self::data::{Contraption, Direction, Mirror};
 
 pub fn solve(input: &[u8]) -> (String, String) {
     let input = String::from_utf8_lossy(input);
@@ -24,22 +26,22 @@ pub fn solve(input: &[u8]) -> (String, String) {
     // println!();
 
     // Part 2
-    let top_edge = contraption.x_bound.clone().map(|x| {
+    let top_edge = contraption.x_bound.clone().into_par_iter().map(|x| {
         let y = contraption.y_bound.start;
         let beam = contraption.fire_beam(((x, y), Direction::South));
         beam.len()
     });
-    let bottom_edge = contraption.x_bound.clone().map(|x| {
+    let bottom_edge = contraption.x_bound.clone().into_par_iter().map(|x| {
         let y = contraption.y_bound.end - 1;
         let beam = contraption.fire_beam(((x, y), Direction::North));
         beam.len()
     });
-    let left_edge = contraption.y_bound.clone().map(|y| {
+    let left_edge = contraption.y_bound.clone().into_par_iter().map(|y| {
         let x = contraption.x_bound.start;
         let beam = contraption.fire_beam(((x, y), Direction::East));
         beam.len()
     });
-    let right_edge = contraption.y_bound.clone().map(|y| {
+    let right_edge = contraption.y_bound.clone().into_par_iter().map(|y| {
         let x = contraption.x_bound.end - 1;
         let beam = contraption.fire_beam(((x, y), Direction::West));
         beam.len()
@@ -56,8 +58,8 @@ pub fn solve(input: &[u8]) -> (String, String) {
 }
 
 fn _print_contraption(ctt: &Contraption) {
-    for y in ctt.x_bound.clone() {
-        for x in ctt.y_bound.clone() {
+    for y in ctt.y_bound.clone() {
+        for x in ctt.x_bound.clone() {
             let c = match ctt.mirrors.get(&(x, y)) {
                 Some(Mirror::Left) => '\\',
                 Some(Mirror::Right) => '/',
@@ -71,13 +73,10 @@ fn _print_contraption(ctt: &Contraption) {
     }
 }
 
-fn _print_contraption_coords(ctt: &Contraption, coords: &[(data::Coord, data::Direction)]) {
-    for y in ctt.x_bound.clone() {
-        for x in ctt.y_bound.clone() {
-            if let Some(dir) = coords
-                .iter()
-                .find_map(|(coord, dir)| (coord == &(x, y)).then_some(dir))
-            {
+fn _print_contraption_coords(ctt: &Contraption, coords: &HashMap<data::Coord, data::Direction>) {
+    for y in ctt.y_bound.clone() {
+        for x in ctt.x_bound.clone() {
+            if let Some(dir) = coords.get(&(x, y)) {
                 match dir {
                     data::Direction::North => print!("^"),
                     data::Direction::West => print!("<"),
