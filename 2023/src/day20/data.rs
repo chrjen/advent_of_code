@@ -139,13 +139,57 @@ impl<'a> System<'a> {
         system
     }
 
+    #[allow(unused)]
+    pub fn has_module(&self, name: &str) -> bool {
+        self.modules.contains_key(name)
+            || self
+                .modules
+                .values()
+                .flat_map(|m| m.get_outputs().iter())
+                .any(|v| *v == name)
+    }
+
+    #[allow(unused)]
+    pub fn print_graphviz(&self) {
+        println!("digraph System {{");
+
+        for (name, module) in self.modules.iter() {
+            match module {
+                Module::FlipFlop { state, outputs } => {
+                    if *state == Pulse::High {
+                        println!("  {name}[shape=circle style=filled fillcolor=yellow]");
+                    } else {
+                        println!("  {name}[shape=circle]");
+                    }
+                    for &output in outputs.iter() {
+                        println!("  {name} -> {output}")
+                    }
+                }
+                Module::Conjunction { outputs, .. } => {
+                    println!("  {name}[shape=diamond]");
+                    for &output in outputs.iter() {
+                        println!("  {name} -> {output}")
+                    }
+                }
+                Module::Broadcaster { outputs } => {
+                    println!("  {name}[shape=box]");
+                    for &output in outputs.iter() {
+                        println!("  {name} -> {output}")
+                    }
+                }
+            }
+        }
+
+        println!("}}");
+    }
+
     fn send_pulse(
         queue: &mut VecDeque<(&'a str, &'a str, Pulse)>,
         src: &'a str,
         dst: &'a str,
         pulse: Pulse,
     ) {
-        // println!("{} -{}-> {}", src, pulse, dst); // Debug
+        // println!("{} -{}-> {}", src, pulse, dst); // Debug: prints like the examples.
         queue.push_back((src, dst, pulse));
     }
 
@@ -153,23 +197,29 @@ impl<'a> System<'a> {
     ///
     /// ## Return
     /// A tuple containing the number of low pulses and high pulses sent, in
-    /// that order.
-    pub fn button_pulse(&mut self) -> (usize, usize) {
+    /// that order and whether the "rx" module was set to low.
+    pub fn button_pulse(&mut self) -> (usize, usize, bool) {
         System::send_pulse(&mut self.pulse_queue, "button", "broadcaster", Pulse::Low);
 
         let mut high_count = 0;
         let mut low_count = 0;
+        let mut rx_set_low = false;
 
         while let Some((src, dst, pulse)) = self.pulse_queue.pop_front() {
             match pulse {
                 Pulse::High => high_count += 1,
-                Pulse::Low => low_count += 1,
+                Pulse::Low => {
+                    low_count += 1;
+                    if dst == "rx" {
+                        rx_set_low = true;
+                    }
+                }
             }
             if let Some(module) = self.modules.get_mut(dst) {
                 module.pulse(&mut self.pulse_queue, src, dst, pulse);
             }
         }
 
-        (low_count, high_count)
+        (low_count, high_count, rx_set_low)
     }
 }
