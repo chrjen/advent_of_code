@@ -7,21 +7,87 @@ pub const SOLUTION: common::Solution = common::Solution {
 mod data;
 mod parse;
 
-use self::data::Block;
+use std::collections::HashSet;
+
+use self::data::{Block, BlockFallResult, BlockId};
 
 pub fn solve(input: &[u8]) -> (String, String) {
     let input = String::from_utf8_lossy(input);
 
     let mut blocks: Vec<Block> = parse::blocks(&input).expect("input should be valid").1;
+    let result = Block::fall_all(blocks.as_mut_slice());
 
-    // Part 1
-    let part1 = Block::fall_all(blocks.as_mut_slice());
-
+    // // Uncomment this to output in a python friendly format that can be
+    // // pasted into the accompanied python script for Blender visualisation.
     // for block in blocks {
     //     println!("{},", block._to_python_value());
     // }
 
-    (part1.to_string(), 0.to_string())
+    // Part 1
+    let not_removable: HashSet<BlockId> = result
+        .supportee_for_id()
+        .values()
+        .flat_map(|set| (set.len() < 2).then_some(set.iter().next()).flatten())
+        .copied()
+        .collect();
+
+    let part1 = blocks.len() - not_removable.len();
+
+    // Part 2
+    /// Recursive (DFS) that finds all the blocks that would fall as result
+    /// of removing the block with the given ID.
+    ///
+    /// This works by first setting the initial block as fallen. Then we explore
+    /// each of the blocks that was supported by that block. If a given block
+    /// that we explore has a supporting block that has yet to fall, we
+    /// skip exploring down that path any further, otherwise we make the block
+    /// fall by recursively calling this function with the new block.
+    ///
+    /// Suppose you have a branching path that merge back together like below.
+    /// Here both D and E are supported by B and C, so neither can fall before
+    /// both B and C fall.
+    ///
+    ///   D E
+    ///   |X|
+    ///   B C
+    ///   \/
+    ///   A
+    ///
+    /// If we start at A, the reason this solution works is that this function
+    /// will first explore down path C, marking it as fallen. D and E are next,
+    /// but are still supported so that path ends. Next when go down the other
+    /// path (B). This time by the time we reach D and E both B and C will have
+    /// been marked as fallen, so will D and E no longer has any supporting
+    /// blocks and will fall.
+    fn calc_fallen(id: BlockId, result: &BlockFallResult, fallen: &mut HashSet<BlockId>) {
+        fallen.insert(id);
+
+        // Loop through all blocks supported by this one.
+        for supportee in result.supporter_for_id().get(&id).unwrap() {
+            let remaining_supporters = result
+                .supportee_for_id()
+                .get(supportee)
+                .unwrap()
+                .difference(fallen)
+                .count();
+            if remaining_supporters > 0 {
+                continue;
+            }
+
+            calc_fallen(*supportee, result, fallen);
+        }
+    }
+
+    let part2: usize = not_removable
+        .into_iter()
+        .map(|block_id| {
+            let mut fallen: HashSet<BlockId> = HashSet::new();
+            calc_fallen(block_id, &result, &mut fallen);
+            fallen.len() - 1
+        })
+        .sum();
+
+    (part1.to_string(), part2.to_string())
 }
 
 #[cfg(test)]
@@ -124,10 +190,18 @@ mod tests {
     solution!(p1, p1_solution, "386");
 
     // Part 2
-    // example!(p2, p2_example_1, "", "0");
-    // example!(p2, p2_example_2, "", "0");
-    // example!(p2, p2_example_3, "", "0");
-    // example!(p2, p2_example_4, "", "0");
-    // example!(p2, p2_example_5, "", "0");
-    // solution!(p2, p2_solution, "100");
+    example!(
+        p2,
+        p2_example_1,
+        "\
+1,0,1~1,2,1
+0,0,2~2,0,2
+0,2,3~2,2,3
+0,0,4~0,2,4
+2,0,5~2,2,5
+0,1,6~2,1,6
+1,1,8~1,1,9",
+        "7"
+    );
+    solution!(p2, p2_solution, "39933");
 }
