@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 use crossterm::style::Stylize;
 use itertools::Itertools;
@@ -84,7 +84,102 @@ pub fn solve(input: &[u8]) -> (String, String) {
         .get(&trails.end)
         .expect("should have found the end location");
 
-    (part1.to_string(), 0.to_string())
+    // Part 2
+    // We first need to simplify the graph by reducing the path between
+    // intersections. Turning it from an unweighted graph to a weighted one.
+    // We use DFS to quickly find the next intersection, give it a name,
+    // and store edges to previous intersections. This is an optimisation to
+    // make later path finding faster, especially part 2.
+    let mut queue = Vec::new();
+    let mut nodes: HashMap<Coord, Vec<(usize, Coord)>> = HashMap::new();
+    let mut visited: HashSet<Coord> = HashSet::new();
+    queue.push((trails.start, None, 0, trails.start));
+    nodes.insert(trails.start, Vec::new());
+
+    while let Some((current, prev, dist, prev_node)) = queue.pop() {
+        let (x, y) = current;
+
+        if !visited.insert(current) {
+            if nodes.contains_key(&current) {
+                nodes.get_mut(&prev_node).unwrap().push((dist, current));
+                nodes.get_mut(&current).unwrap().push((dist, prev_node));
+            }
+            continue;
+        }
+
+        let mut neighbours = [(x, y - 1), (x + 1, y), (x, y + 1), (x - 1, y)]
+            .into_iter()
+            .filter(|neighbour| {
+                let tile = trails.map.get(neighbour);
+                let is_blocked = matches!(tile, Some(Tile::Forest));
+
+                !is_blocked && !prev.is_some_and(|prev: Coord| *neighbour == prev)
+            })
+            .collect::<Vec<_>>();
+
+        if neighbours.len() == 1 {
+            queue.push((
+                neighbours.pop().unwrap(),
+                Some(current),
+                dist + 1,
+                prev_node,
+            ));
+        } else if neighbours.len() >= 2 {
+            nodes.get_mut(&prev_node).unwrap().push((dist, current));
+            nodes.insert(current, vec![(dist, prev_node)]);
+            for neighbour in neighbours {
+                queue.push((neighbour, Some(current), 1, current));
+            }
+        } else if neighbours.is_empty() {
+            nodes.get_mut(&prev_node).unwrap().push((dist, current));
+            nodes.insert(current, vec![(dist, prev_node)]);
+        }
+    }
+
+    // // Prints out the new simplified graph based on the intersections.
+    // for (coord, edges) in nodes.iter() {
+    //     for (weight, coord2) in edges.iter() {
+    //         println!("{:?} -{}-> {:?}", coord, weight, coord2);
+    //     }
+    // }
+
+    // Basic DFS, same as part 1, though now we also keep track of ALL
+    // previously explored nodes so that we don't visit any twice. In part 1
+    // only the previous tile/node was enough.
+    let mut next: Vec<(Coord, HashSet<Coord>, usize)> = Vec::new();
+    let mut distances: HashMap<Coord, usize> = HashMap::new();
+    next.push((trails.start, HashSet::new(), 0usize));
+
+    while let Some((current, mut prev, dist)) = next.pop() {
+        prev.insert(current);
+
+        let neighbours = nodes.get(&current).unwrap();
+
+        distances
+            .entry(current)
+            .and_modify(|d| {
+                *d = (*d).max(dist);
+            })
+            .or_insert(dist);
+
+        for (neighbour_dist, neighbour) in neighbours {
+            if prev.contains(neighbour) {
+                continue;
+            }
+
+            let tile = trails.map.get(&current);
+            match tile {
+                Some(Tile::Forest) => {}
+                _ => next.push((*neighbour, prev.clone(), dist + neighbour_dist)),
+            }
+        }
+    }
+
+    let part2 = distances
+        .get(&trails.end)
+        .expect("should have found the end location");
+
+    (part1.to_string(), part2.to_string())
 }
 
 fn _print_hiking_trails(trails: &HikingTrails) {
@@ -161,13 +256,37 @@ mod tests {
 #####################.#",
         "94"
     );
-    solution!(p1, p1_solution, "2278");
+    solution!(p1, p1_solution, "2278", ignore = "takes too long");
 
     // Part 2
-    // example!(p2, p2_example_1, "", "0");
-    // example!(p2, p2_example_2, "", "0");
-    // example!(p2, p2_example_3, "", "0");
-    // example!(p2, p2_example_4, "", "0");
-    // example!(p2, p2_example_5, "", "0");
-    // solution!(p2, p2_solution, "100");
+    example!(
+        p2,
+        p2_example_1,
+        "\
+#.#####################
+#.......#########...###
+#######.#########.#.###
+###.....#.>.>.###.#.###
+###v#####.#v#.###.#.###
+###.>...#.#.#.....#...#
+###v###.#.#.#########.#
+###...#.#.#.......#...#
+#####.#.#.#######.#.###
+#.....#.#.#.......#...#
+#.#####.#.#.#########v#
+#.#...#...#...###...>.#
+#.#.#v#######v###.###v#
+#...#.>.#...>.>.#.###.#
+#####v#.#.###v#.#.###.#
+#.....#...#...#.#.#...#
+#.#########.###.#.#.###
+#...###...#...#...#.###
+###.###.#.###v#####v###
+#...#...#.#.>.>.#.>.###
+#.###.###.#.###.#.#v###
+#.....###...###...#...#
+#####################.#",
+        "154"
+    );
+    solution!(p2, p2_solution, "6734", ignore = "takes too long");
 }
