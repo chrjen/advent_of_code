@@ -6,9 +6,8 @@ use nom::{
     sequence::{delimited, separated_pair, terminated, tuple},
     IResult,
 };
-use num::BigRational;
 
-use super::data::Trajectory;
+use super::data::{Num, Trajectory};
 
 pub(super) fn spaced_separator(separator: char) -> impl Fn(&str) -> IResult<&str, char> {
     move |input: &str| -> IResult<&str, char> {
@@ -16,13 +15,13 @@ pub(super) fn spaced_separator(separator: char) -> impl Fn(&str) -> IResult<&str
     }
 }
 
-pub(super) fn big_rational_parser(input: &str) -> IResult<&str, BigRational> {
+pub(super) fn big_rational_parser(input: &str) -> IResult<&str, Num> {
     map_res(recognize(tuple((opt(tag("-")), digit1))), |v: &str| {
-        v.parse::<BigRational>()
+        v.parse::<Num>()
     })(input)
 }
 
-pub(super) fn vec3(input: &str) -> IResult<&str, (BigRational, BigRational, BigRational)> {
+pub(super) fn vec3(input: &str) -> IResult<&str, (Num, Num, Num)> {
     tuple((
         terminated(big_rational_parser, spaced_separator(',')),
         terminated(big_rational_parser, spaced_separator(',')),

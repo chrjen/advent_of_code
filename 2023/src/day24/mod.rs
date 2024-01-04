@@ -7,20 +7,19 @@ pub const SOLUTION: common::Solution = common::Solution {
 mod data;
 mod parse;
 
-use self::data::Trajectory;
+use self::data::{Num, Trajectory};
 use itertools::Itertools;
-use num::{BigInt, BigRational, Zero};
+use num::Zero;
 use std::ops::RangeInclusive;
 
 pub fn solve(input: &[u8]) -> (String, String) {
     _solve(
         input,
-        BigRational::from_integer(BigInt::from(200000000000000_u64))
-            ..=BigRational::from_integer(BigInt::from(400000000000000_u64)),
+        Num::from_integer(200000000000000_i128)..=Num::from_integer(400000000000000_i128),
     )
 }
 
-pub fn _solve(input: &[u8], range: RangeInclusive<BigRational>) -> (String, String) {
+pub fn _solve(input: &[u8], range: RangeInclusive<Num>) -> (String, String) {
     let input = String::from_utf8_lossy(input);
 
     let trajectories = parse::parse_trajectories(&input)
@@ -35,8 +34,8 @@ pub fn _solve(input: &[u8], range: RangeInclusive<BigRational>) -> (String, Stri
             if let Some((ref x, ref y)) = Trajectory::trajectory_intersection(t0, t1) {
                 if range.contains(x)
                     && range.contains(y)
-                    && t0.point_time(x, y) >= BigRational::zero()
-                    && t1.point_time(x, y) >= BigRational::zero()
+                    && t0.point_time(x, y) >= Num::zero()
+                    && t1.point_time(x, y) >= Num::zero()
                 {
                     1
                 } else {
@@ -55,7 +54,6 @@ pub fn _solve(input: &[u8], range: RangeInclusive<BigRational>) -> (String, Stri
 mod tests {
     use super::*;
     use common::solution;
-    use num::{BigInt, BigRational};
 
     #[test]
     fn p1_example_1() {
@@ -68,8 +66,7 @@ mod tests {
         println!("input: {input}");
         let (result, _) = _solve(
             str::as_bytes(input),
-            BigRational::from_integer(BigInt::from(7))
-                ..=BigRational::from_integer(BigInt::from(27)),
+            Num::from_integer(7)..=Num::from_integer(27),
         );
         assert_eq!(result, "2");
     }
