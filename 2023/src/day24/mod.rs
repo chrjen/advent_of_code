@@ -47,13 +47,18 @@ pub fn _solve(input: &[u8], range: RangeInclusive<Num>) -> (String, String) {
         })
         .sum();
 
-    (part1.to_string(), 0.to_string())
+    // Part 2
+    let (px, py, pz) =
+        Trajectory::rock_trajectory_position(&trajectories[0], &trajectories[1], &trajectories[2]);
+    let part2 = px + py + pz;
+
+    (part1.to_string(), part2.to_string())
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use common::solution;
+    use common::{example, solution};
 
     #[test]
     fn p1_example_1() {
@@ -70,18 +75,21 @@ mod tests {
         );
         assert_eq!(result, "2");
     }
-    solution!(
-        p1,
-        p1_solution,
-        "12740",
-        ignore = "takes too long in debug mode"
-    );
+    solution!(p1, p1_solution, "12740");
 
     // Part 2
-    // example!(p2, p2_example_1, "", "0");
-    // example!(p2, p2_example_2, "", "0");
-    // example!(p2, p2_example_3, "", "0");
-    // example!(p2, p2_example_4, "", "0");
-    // example!(p2, p2_example_5, "", "0");
-    // solution!(p2, p2_solution, "100");
+    example!(
+        p2,
+        p2_example_1,
+        "\
+19, 13, 30 @ -2,  1, -2
+18, 19, 22 @ -1, -1, -2
+20, 25, 34 @ -2, -2, -4
+12, 31, 28 @ -1, -2, -1
+20, 19, 15 @  1, -5, -3",
+        "47"
+    );
+    // Start position: (131633231355646, 371683716481156, 238674624073734)
+    // Velocity      : (268, -197, 68)
+    solution!(p2, p2_solution, "741991571910536");
 }

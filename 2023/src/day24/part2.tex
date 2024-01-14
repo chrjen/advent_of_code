@@ -1,0 +1,143 @@
+\documentclass[11pt]{article}
+
+\usepackage{amsmath}
+\usepackage{bm}
+\usepackage{calc}
+\usepackage{biblatex}
+\usepackage{environ}         % provides \BODY
+\usepackage{etoolbox}        % provides \ifdimcomp
+\usepackage{graphicx}        % provides \resizebox
+\usepackage{hyperref}
+\usepackage[a4paper, margin=3cm]{geometry}
+
+\newcommand{\uvecx}{{\mathbf{\hat{\textnormal{\bfseries x}}}}}
+\newcommand{\uvecy}{{\mathbf{\hat{\textnormal{\bfseries y}}}}}
+\newcommand{\uvecz}{{\mathbf{\hat{\textnormal{\bfseries z}}}}}
+
+
+\begin{document}
+
+\section*{Advent of Code 2023 – Day 24 Part 2}
+
+In the problem all bodies move in a linear fashion which can be described
+by the following vector equation. $\vec{s}(t)$ is the position after a time $t$,
+$\vec{p}$ is the initial position at time 0, and $\vec{v}$ is the velocity.
+\begin{equation}
+    \vec{s}(t) = \vec{p} + \vec{v}t
+\end{equation}
+
+So we can start by finding when the stone $s$ and any hailstone are both in the same place
+at the same time. We can write this as $\vec{s_s}(t) = \vec{s_0}(t)$ which when expanded gives
+us the following equation.
+\begin{align}
+    \vec{p_s} + \vec{v_s}t = \vec{p_0} + \vec{v_0}t \\
+    \vec{p_s} - \vec{p_0} + (\vec{v_s} - \vec{v_0})t = \vec{0}
+\end{align}
+
+To start solving this I took inspiration from this post on
+Github\footnote{\url{https://gist.github.com/tom-huntington/00065d3f5c52a900bfa99a6230470956}}
+making use of the wedge product to solve for the initial position. Wedge product is a
+concept from Exterior algebra\footnote{\url{https://en.wikipedia.org/wiki/Exterior_algebra}} which
+was new to me. It took me down the rabbit hole that was Geometric algebra, especially the YouTube
+channel sudgylacmoe\footnote{\url{https://www.youtube.com/@sudgylacmoe}} was very helpful.
+
+The first step is to wedge both sides with $(\vec{v_s} - \vec{v_0})$ which eliminates time
+component since any vector wedged with itself is zero.
+\begin{align}
+    [\vec{p_s} - \vec{p_0} + (\vec{v_s} - \vec{v_0})t] \wedge (\vec{v_s} - \vec{v_0}) &= \vec{0} \wedge (\vec{v_s} - \vec{v_0}) \nonumber \\
+    \vec{p_s} \wedge (\vec{v_s} - \vec{v_0}) - \vec{p_0} \wedge (\vec{v_s} - \vec{v_0})  &= \vec{0} \nonumber \\
+    \vec{p_s} \wedge \vec{v_s} - \vec{p_s} \wedge \vec{v_0} - \vec{p_0} \wedge \vec{v_s} + \vec{p_0} \wedge \vec{v_0}  &= \vec{0} \nonumber 
+\end{align}
+
+Next we want to also eliminate the stone's initial velocity $\vec{v}_s$ from the equation. To do this
+we can use the equation above, but for a different hailstone with initial position and velocity $\vec{p}_1$
+and $\vec{v}_1$. Then subtract that new equation from the equation above for hailstone 0. This eliminates
+the constant $\vec{p_s} \wedge \vec{v_s}$ term shared between them.
+\begin{gather*}
+    (\vec{p_s} \wedge \vec{v_s} - \vec{p_s} \wedge \vec{v_0} - \vec{p_0} \wedge \vec{v_s} + \vec{p_0} \wedge \vec{v_0}) - (\vec{p_s} \wedge \vec{v_s} - \vec{p_s} \wedge \vec{v_1} - \vec{p_1} \wedge \vec{v_s} + \vec{p_1} \wedge \vec{v_1}) = \vec{0} \\
+    \vec{p_s} \wedge \vec{v_s} - \vec{p_s} \wedge \vec{v_0} - \vec{p_0} \wedge \vec{v_s} + \vec{p_0} \wedge \vec{v_0} - \vec{p_s} \wedge \vec{v_s} + \vec{p_s} \wedge \vec{v_1} + \vec{p_1} \wedge \vec{v_s} - \vec{p_1} \wedge \vec{v_1} = \vec{0} \\
+    - \vec{p_s} \wedge \vec{v_0} - \vec{p_0} \wedge \vec{v_s} + \vec{p_0} \wedge \vec{v_0} + \vec{p_s} \wedge \vec{v_1} + \vec{p_1} \wedge \vec{v_s} - \vec{p_1} \wedge \vec{v_1} = \vec{0}
+\end{gather*}
+
+Further rearranging and grouping of term we can get the following.
+\begin{gather*}
+    \vec{p_s} \wedge \vec{v_1} - \vec{p_s} \wedge \vec{v_0} + \vec{p_1} \wedge \vec{v_s} - \vec{p_0} \wedge \vec{v_s} + \vec{p_0} \wedge \vec{v_0} - \vec{p_1} \wedge \vec{v_1} = \vec{0} \\
+    \vec{p_s} \wedge (\vec{v_1} - \vec{v_0}) + (\vec{p_1} - \vec{p_0}) \wedge \vec{v_s} + \vec{p_0} \wedge \vec{v_0} - \vec{p_1} \wedge \vec{v_1} = \vec{0}
+\end{gather*}
+
+Then to finally get eliminate $\vec{v}_s$ from the equation we wedge both sides with
+$(\vec{p_1} - \vec{p_0})$. 
+\begin{gather*}
+    (\vec{p_1} - \vec{p_0}) \wedge [\vec{p_s} \wedge (\vec{v_1} - \vec{v_0}) + (\vec{p_1} - \vec{p_0}) \wedge \vec{v_s} + \vec{p_0} \wedge \vec{v_0} - \vec{p_1} \wedge \vec{v_1}] = \vec{0} \\
+    (\vec{p_1} - \vec{p_0}) \wedge \vec{p_s} \wedge (\vec{v_1} - \vec{v_0}) +  (\vec{p_1} - \vec{p_0}) \wedge \vec{p_0} \wedge \vec{v_0} -  (\vec{p_1} - \vec{p_0}) \wedge \vec{p_1} \wedge \vec{v_1} = \vec{0} \\
+    (\vec{p_1} - \vec{p_0}) \wedge \vec{p_s} \wedge (\vec{v_1} - \vec{v_0}) +  \vec{p_1} \wedge \vec{p_0} \wedge \vec{v_0} + \vec{p_0} \wedge \vec{p_1} \wedge \vec{v_1} = \vec{0}
+\end{gather*}
+
+Lastly we can swap the order of the wedge product and subtraction, and group terms together to get
+the final equation below. An interesting thing is that until this point we have made no assumption
+about the dimension of our vector, meaning that this should be valid in 2D as well as 5D.
+\begin{align} \label{final_wedge}
+    \vec{p_s} \wedge ( \vec{p_0} - \vec{p_1} ) \wedge ( \vec{v_0} - \vec{v_1} ) + \
+    \vec{p_0} \wedge \vec{p_1} \wedge ( \vec{v_0} - \vec{v_1} ) = \vec{0}
+\end{align}
+
+Next we want to expand the wedge product. Expanding any three vectors with three dimensions
+gives us the following.
+\begin{align}
+    (a_0\uvecx + b_0\uvecy + c_0\uvecz) \wedge (a_1\uvecx + b_1\uvecy + c_1\uvecz) \wedge (a_2\uvecx + b_2\uvecy + c_2\uvecz) \nonumber \\
+    = ( a_0(b_1c_2 - c_1b_2) + b_0(c_1a_2 - a_1c_2) + c_0(a_1b_2 - b_1a_2) ) \uvecx \wedge \uvecy \wedge \uvecz  \label{wedge_partial_expand} \\
+    = ( a_0b_1c_2 - a_0c_1b_2 + b_0c_1a_2 - b_0a_1c_2 + c_0a_1b_2 - c_0b_1a_2 ) \uvecx \wedge \uvecy \wedge \uvecz \label{wedge_full_expand}
+\end{align}
+
+Now we can expand equation \eqref{final_wedge} using formula \eqref{wedge_partial_expand} and
+\eqref{wedge_full_expand} and moving one of the terms over gives us the following equation.
+\begin{align}
+    ( &p_{sx}((p_{0y}-p_{1y})(v_{0z}-v_{1z}) - (p_{0z}-p_{1z})(v_{0y}-v_{1y})) + \nonumber \\
+    &p_{sy}((p_{0z}-p_{1z})(v_{0x}-v_{1x}) - (p_{0x}-p_{1x})(v_{0z}-v_{1z})) + \nonumber \\
+    &p_{sz}((p_{0x}-p_{1x})(v_{0y}-v_{1y}) - (p_{0y}-p_{1y})(v_{0x}-v_{1x})) ) \uvecx \wedge \uvecy \wedge \uvecz \nonumber \\
+    &= - ( p_{0x}p_{1y}(v_{0z}-v_{1z}) - p_{0x}p_{1z}(v_{0y}-v_{1y}) + p_{0y}p_{1z}(v_{0x}-v_{1x}) - \nonumber \\
+    &\quad p_{0y}p_{1x}(v_{0z}-v_{1z}) + p_{0z}p_{1x}(v_{0y}-v_{1y}) - p_{0z}p_{1y}(v_{0x}-v_{1x}) ) \uvecx \wedge \uvecy \wedge \uvecz
+\end{align}
+
+To simplify the differences are replaced with a combined subscripts, in order. For example
+the difference $(p_{0y}-p_{1y})$ will be rewritten as $p_{01y}$. I also remove the minus
+from the right hand side.
+\begin{align}
+      &( p_{sx}(p_{01y}v_{01z} - p_{01z}v_{01y}) + p_{sy}(p_{01z}v_{01x} - p_{01x}v_{01z}) + p_{sz}(p_{01x}v_{01y} - p_{01y}v_{01x}) ) \uvecx \wedge \uvecy \wedge \uvecz \nonumber \\
+    = &(-p_{0x}p_{1y}v_{01z} + p_{0x}p_{1z}v_{01y} - p_{0y}p_{1z}v_{01x} + p_{0y}p_{1x}v_{01z} - p_{0z}p_{1x}v_{01y} + p_{0z}p_{1y}v_{01x} ) \uvecx \wedge \uvecy \wedge \uvecz \nonumber
+\end{align}
+
+We can remove $\uvecx \wedge \uvecy \wedge \uvecz$ from both sides and we get an equation with three unknowns.
+If we include two more such equations for different hailstones we get a system of three linear equations
+and three unknowns, which we can solve.
+\begin{align}
+    & p_{sx}(p_{01y}v_{01z} - p_{01z}v_{01y}) + p_{sy}(p_{01z}v_{01x} - p_{01x}v_{01z}) + p_{sz}(p_{01x}v_{01y} - p_{01y}v_{01x}) \nonumber \\
+  = &-p_{0x}p_{1y}v_{01z} + p_{0x}p_{1z}v_{01y} - p_{0y}p_{1z}v_{01x} + p_{0y}p_{1x}v_{01z} - p_{0z}p_{1x}v_{01y} + p_{0z}p_{1y}v_{01x} \nonumber \\
+    & p_{sx}(p_{12y}v_{12z} - p_{12z}v_{12y}) + p_{sy}(p_{12z}v_{12x} - p_{12x}v_{12z}) + p_{sz}(p_{12x}v_{12y} - p_{12y}v_{12x}) \nonumber \\
+  = &-p_{1x}p_{2y}v_{12z} + p_{1x}p_{2z}v_{12y} - p_{1y}p_{2z}v_{12x} + p_{1y}p_{2x}v_{12z} - p_{1z}p_{2x}v_{12y} + p_{1z}p_{2y}v_{12x} \nonumber \\
+    & p_{sx}(p_{20y}v_{20z} - p_{20z}v_{20y}) + p_{sy}(p_{20z}v_{20x} - p_{20x}v_{20z}) + p_{sz}(p_{20x}v_{20y} - p_{20y}v_{20x}) \nonumber \\
+  = &-p_{2x}p_{0y}v_{20z} + p_{2x}p_{0z}v_{20y} - p_{2y}p_{0z}v_{20x} + p_{2y}p_{0x}v_{20z} - p_{2z}p_{0x}v_{20y} + p_{2z}p_{0y}v_{20x} \nonumber
+\end{align}
+
+Let's rewrite it as a matrix equation which we then can give to a computer to have it solve it using
+something like Gauss-Jordan Elimination.
+\begin{align}
+    &\begin{bmatrix}
+        p_{01y}v_{01z} - p_{01z}v_{01y} & p_{01z}v_{01x} - p_{01x}v_{01z} & p_{01x}v_{01y} - p_{01y}v_{01x} \\
+        p_{12y}v_{12z} - p_{12z}v_{12y} & p_{12z}v_{12x} - p_{12x}v_{12z} & p_{12x}v_{12y} - p_{12y}v_{12x} \\
+        p_{20y}v_{20z} - p_{20z}v_{20y} & p_{20z}v_{20x} - p_{20x}v_{20z} & p_{20x}v_{20y} - p_{20y}v_{20x}
+    \end{bmatrix}
+    \begin{bmatrix}
+        p_{sx} \\
+        p_{sy} \\
+        p_{sz}
+    \end{bmatrix} \nonumber \\
+    =
+    &\begin{bmatrix}
+        -p_{0x}p_{1y}v_{01z} + p_{0x}p_{1z}v_{01y} - p_{0y}p_{1z}v_{01x} + p_{0y}p_{1x}v_{01z} - p_{0z}p_{1x}v_{01y} + p_{0z}p_{1y}v_{01x} \\
+        -p_{1x}p_{2y}v_{12z} + p_{1x}p_{2z}v_{12y} - p_{1y}p_{2z}v_{12x} + p_{1y}p_{2x}v_{12z} - p_{1z}p_{2x}v_{12y} + p_{1z}p_{2y}v_{12x} \\
+        -p_{2x}p_{0y}v_{20z} + p_{2x}p_{0z}v_{20y} - p_{2y}p_{0z}v_{20x} + p_{2y}p_{0x}v_{20z} - p_{2z}p_{0x}v_{20y} + p_{2z}p_{0y}v_{20x} \nonumber
+    \end{bmatrix}
+\end{align}
+
+\end{document}
