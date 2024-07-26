@@ -17,18 +17,18 @@ use crossterm::execute;
 use crossterm::style::{Color, SetForegroundColor};
 
 use solutions_2015 as s15;
-use solutions_2016 as s16;
-use solutions_2022 as s22;
-use solutions_2023 as s23;
+// use solutions_2016 as s16;
+// use solutions_2022 as s22;
+// use solutions_2023 as s23;
 
 const ALL_YEARS: [u32; 4] = [2015, 2016, 2022, 2023];
 
-fn solutions_for_year(year: u32) -> Option<&'static [Option<Solution<'static>>]> {
+fn solutions_for_year(year: u32) -> Option<Box<[Option<common::Solution<'static>>]>> {
     match year {
-        2015 => Some(s15::SOLUTIONS),
-        2016 => Some(s16::SOLUTIONS),
-        2022 => Some(s22::SOLUTIONS),
-        2023 => Some(s23::SOLUTIONS),
+        2015 => Some(s15::solutions()),
+        // 2016 => Some(s16::SOLUTIONS),
+        // 2022 => Some(s22::SOLUTIONS),
+        // 2023 => Some(s23::SOLUTIONS),
         _ => None,
     }
 }
@@ -67,7 +67,7 @@ fn main() {
 fn run_specific_year(year: u32, day: Option<u32>, input: Option<PathBuf>) {
     if let Some(solutions) = solutions_for_year(year) {
         if let Some(day) = day {
-            run_specific_day(solutions, day, input);
+            run_specific_day(solutions.as_ref(), day, input);
         }
 
         for solution in solutions.iter().flatten() {
@@ -134,7 +134,8 @@ fn println_solution_with_input(solution: &Solution, input: &[u8]) {
     execute!(stdout, SetForegroundColor(Color::White)).ok();
 
     // Output solution part 1.
-    let mut lines = part1.lines();
+    let part1_str = part1.to_string();
+    let mut lines = part1_str.lines();
     if let Some(first_line) = lines.next() {
         println!("(1) {}", first_line);
     }
@@ -143,7 +144,8 @@ fn println_solution_with_input(solution: &Solution, input: &[u8]) {
     }
 
     // Output solution part 2.
-    let mut lines = part2.lines();
+    let part2_str = part2.to_string();
+    let mut lines = part2_str.lines();
     if let Some(first_line) = lines.next() {
         println!("(2) {}", first_line);
     }

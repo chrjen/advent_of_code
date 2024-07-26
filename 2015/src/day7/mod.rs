@@ -20,6 +20,7 @@ mod tokens {
     }
 
     #[derive(Debug, Clone)]
+    #[allow(dead_code)]
     pub enum TokenType {
         Invalid(String),
         Ident(String),

@@ -1,12 +1,14 @@
 use regex::Regex;
 
-pub const SOLUTION: common::Solution = common::Solution {
-    name: "Day 2: I Was Told There Would Be No Math",
-    input: std::include_bytes!("input"),
-    solve: self::solve,
-};
+pub fn solver<'a>() -> common::Solution<'a> {
+    common::Solution {
+        name: "Day 2: I Was Told There Would Be No Math",
+        input: std::include_bytes!("input"),
+        solve: common::to_solver(self::solve),
+    }
+}
 
-pub fn solve(input: &[u8]) -> (String, String) {
+pub fn solve(input: &[u8]) -> (u32, u32) {
     let input: &str = std::str::from_utf8(input).unwrap();
     let reg = Regex::new(r"(\d+)x(\d+)x(\d+)").unwrap();
     let mut total_area = 0;
@@ -32,7 +34,7 @@ pub fn solve(input: &[u8]) -> (String, String) {
         }
     }
 
-    (total_area.to_string(), total_length.to_string())
+    (total_area, total_length)
 }
 
 #[cfg(test)]

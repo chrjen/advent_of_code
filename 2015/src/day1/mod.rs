@@ -1,10 +1,12 @@
-pub const SOLUTION: common::Solution = common::Solution {
-    name: "Day 1: Not Quite Lisp",
-    input: std::include_bytes!("input"),
-    solve: self::solve,
-};
+pub fn solver<'a>() -> common::Solution<'a> {
+    common::Solution {
+        name: "Day 1: Not Quite Lisp",
+        input: std::include_bytes!("input"),
+        solve: common::to_solver(self::solve),
+    }
+}
 
-pub fn solve(input: &[u8]) -> (String, String) {
+pub fn solve(input: &[u8]) -> (isize, String) {
     let mut floor: isize = 0;
     let mut basement_idx: Option<usize> = None;
 
@@ -20,7 +22,7 @@ pub fn solve(input: &[u8]) -> (String, String) {
         }
     }
 
-    (floor.to_string(), common::from_option(basement_idx))
+    (floor, common::from_option(basement_idx))
 }
 
 #[cfg(test)]

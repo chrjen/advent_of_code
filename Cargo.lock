@@ -48,9 +48,6 @@ dependencies = [
  "common",
  "crossterm",
  "solutions_2015",
- "solutions_2016",
- "solutions_2022",
- "solutions_2023",
 ]
 
 [[package]]
