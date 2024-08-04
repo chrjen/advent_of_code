@@ -39,18 +39,19 @@ pub fn solve(input: &[u8]) -> (u32, u32) {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use common::{example, solution};
+    use common::{example, part1_tests, part2_tests, solution};
 
     // Part 1
-    example!(p1, p1_example_1, "2x3x4", 58);
-    example!(p1, p1_example_2, "1x1x10", 43);
-    example!(p1, p1_example_3, "jchzalrnumimnmhp", 0);
-    example!(p1, p1_example_4, "haegwjzuvuyypxyu", 0);
-    example!(p1, p1_example_5, "dvszwmarrgswjxmb", 0);
+    part1_tests![
+        (example_1, "2x3x4", 58),
+        (example_2, "1x1x10", 43),
+        (example_3, "jchzalrnumimnmhp", 0),
+        (example_4, "haegwjzuvuyypxyu", 0),
+        (example_5, "dvszwmarrgswjxmb", 0),
+    ];
     solution!(p1, p1_solution, 1588178);
 
     // Part 2
-    example!(p2, p2_example_1, "2x3x4", 34);
-    example!(p2, p2_example_2, "1x1x10", 14);
+    part2_tests![(example_1, "2x3x4", 34), (example_2, "1x1x10", 14),];
     solution!(p2, p2_solution, 3783758);
 }

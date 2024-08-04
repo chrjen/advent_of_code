@@ -50,6 +50,51 @@ macro_rules! example {
     };
 }
 
+// Re-export so that macros using this macro does not have to also add `paste`
+// as a dependency.
+pub use paste::paste;
+
+#[macro_export]
+macro_rules! part1_tests {
+    ($($any:tt)*) => { $crate::part_tests![p1; test; $($any)*]; }
+}
+
+#[macro_export]
+macro_rules! part2_tests {
+    ($($any:tt)*) => { $crate::part_tests![p2; test; $($any)*]; }
+}
+
+#[macro_export]
+macro_rules! part_tests {
+    ($part:ident; $prefix:ident;) => {};
+    (p1; $prefix:ident; ($name:ident, $input:literal, $output:literal $(, $attr:meta)*) $(, $rest:tt)* $(,)?) => {
+        $crate::paste! {
+            #[test]
+            $(#[$attr])*
+            fn [<p1_ $prefix _ $name>]() {
+                println!("input: {}", $input);
+                let (result, _) = solve(str::as_bytes($input));
+                assert_eq!(result, $output);
+            }
+        }
+
+        $crate::part_tests!(p1; $prefix; $($rest),*);
+    };
+    (p2; $prefix:ident; ($name:ident, $input:literal, $output:literal $(, $attr:meta)*) $(, $rest:tt)* $(,)?) => {
+        $crate::paste! {
+            #[test]
+            $(#[$attr])*
+            fn [<p2_ $prefix _ $name>]() {
+                println!("input: {}", $input);
+                let (_, result) = solve(str::as_bytes($input));
+                assert_eq!(result, $output);
+            }
+        }
+
+        $crate::part_tests!(p2; $prefix; $($rest),*);
+    };
+}
+
 #[macro_export]
 macro_rules! solution {
     (p1, $name:ident, $output:literal $(, $attr:meta),*) => {
