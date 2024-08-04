@@ -1,12 +1,11 @@
+use common::{wrap_solve_fn, Solution};
 use regex::Regex;
 
-pub fn solver<'a>() -> common::Solution<'a> {
-    common::Solution {
-        name: "Day 2: I Was Told There Would Be No Math",
-        input: std::include_bytes!("input"),
-        solve: common::to_solver(self::solve),
-    }
-}
+pub const SOLUTION: Solution = Solution {
+    name: "Day 2: I Was Told There Would Be No Math",
+    input: std::include_bytes!("input"),
+    solve: wrap_solve_fn!(self::solve),
+};
 
 pub fn solve(input: &[u8]) -> (u32, u32) {
     let input: &str = std::str::from_utf8(input).unwrap();
@@ -43,15 +42,15 @@ mod tests {
     use common::{example, solution};
 
     // Part 1
-    example!(p1, p1_example_1, "2x3x4", "58");
-    example!(p1, p1_example_2, "1x1x10", "43");
-    example!(p1, p1_example_3, "jchzalrnumimnmhp", "0");
-    example!(p1, p1_example_4, "haegwjzuvuyypxyu", "0");
-    example!(p1, p1_example_5, "dvszwmarrgswjxmb", "0");
-    solution!(p1, p1_solution, "1588178");
+    example!(p1, p1_example_1, "2x3x4", 58);
+    example!(p1, p1_example_2, "1x1x10", 43);
+    example!(p1, p1_example_3, "jchzalrnumimnmhp", 0);
+    example!(p1, p1_example_4, "haegwjzuvuyypxyu", 0);
+    example!(p1, p1_example_5, "dvszwmarrgswjxmb", 0);
+    solution!(p1, p1_solution, 1588178);
 
     // Part 2
-    example!(p2, p2_example_1, "2x3x4", "34");
-    example!(p2, p2_example_2, "1x1x10", "14");
-    solution!(p2, p2_solution, "3783758");
+    example!(p2, p2_example_1, "2x3x4", 34);
+    example!(p2, p2_example_2, "1x1x10", 14);
+    solution!(p2, p2_solution, 3783758);
 }

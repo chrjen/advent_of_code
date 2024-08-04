@@ -23,9 +23,9 @@ use solutions_2015 as s15;
 
 const ALL_YEARS: [u32; 4] = [2015, 2016, 2022, 2023];
 
-fn solutions_for_year(year: u32) -> Option<Box<[Option<common::Solution<'static>>]>> {
+fn solutions_for_year(year: u32) -> Option<&'static [Option<common::Solution>]> {
     match year {
-        2015 => Some(s15::solutions()),
+        2015 => Some(s15::SOLUTIONS),
         // 2016 => Some(s16::SOLUTIONS),
         // 2022 => Some(s22::SOLUTIONS),
         // 2023 => Some(s23::SOLUTIONS),

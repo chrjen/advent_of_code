@@ -1,10 +1,10 @@
-pub fn solver<'a>() -> common::Solution<'a> {
-    common::Solution {
-        name: "Day 1: Not Quite Lisp",
-        input: std::include_bytes!("input"),
-        solve: common::to_solver(self::solve),
-    }
-}
+use common::{wrap_solve_fn, Solution};
+
+pub const SOLUTION: Solution = Solution {
+    name: "Day 1: Not Quite Lisp",
+    input: std::include_bytes!("input"),
+    solve: wrap_solve_fn!(self::solve),
+};
 
 pub fn solve(input: &[u8]) -> (isize, String) {
     let mut floor: isize = 0;
@@ -31,14 +31,14 @@ mod tests {
     use common::{example, solution};
 
     // Part 1
-    example!(p1, p1_example_1, "(())", "0");
-    example!(p1, p1_example_2, "()()", "0");
-    example!(p1, p1_example_3, "))(((((", "3");
-    example!(p1, p1_example_4, "())", "-1");
-    example!(p1, p1_example_5, "))(", "-1");
-    example!(p1, p1_example_6, ")))", "-3");
-    example!(p1, p1_example_7, ")())())", "-3");
-    solution!(p1, p1_solution, "232");
+    example!(p1, p1_example_1, "(())", 0);
+    example!(p1, p1_example_2, "()()", 0);
+    example!(p1, p1_example_3, "))(((((", 3);
+    example!(p1, p1_example_4, "())", -1);
+    example!(p1, p1_example_5, "))(", -1);
+    example!(p1, p1_example_6, ")))", -3);
+    example!(p1, p1_example_7, ")())())", -3);
+    solution!(p1, p1_solution, 232);
 
     // Part 2
     example!(p2, p2_example_1, ")", "1");
