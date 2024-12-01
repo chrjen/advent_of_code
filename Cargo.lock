@@ -51,6 +51,7 @@ dependencies = [
  "solutions_2016",
  "solutions_2022",
  "solutions_2023",
+ "solutions_2024",
 ]
 
 [[package]]
@@ -878,6 +879,14 @@ dependencies = [
  "nom",
  "num 0.4.0",
  "rayon",
+]
+
+[[package]]
+name = "solutions_2024"
+version = "0.1.0"
+dependencies = [
+ "common",
+ "nom",
 ]
 
 [[package]]

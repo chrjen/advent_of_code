@@ -20,8 +20,9 @@ use solutions_2015 as s15;
 use solutions_2016 as s16;
 use solutions_2022 as s22;
 use solutions_2023 as s23;
+use solutions_2024 as s24;
 
-const ALL_YEARS: [u32; 4] = [2015, 2016, 2022, 2023];
+const ALL_YEARS: [u32; 5] = [2015, 2016, 2022, 2023, 2024];
 
 fn solutions_for_year(year: u32) -> Option<&'static [Option<Solution<'static>>]> {
     match year {
@@ -29,6 +30,7 @@ fn solutions_for_year(year: u32) -> Option<&'static [Option<Solution<'static>>]>
         2016 => Some(s16::SOLUTIONS),
         2022 => Some(s22::SOLUTIONS),
         2023 => Some(s23::SOLUTIONS),
+        2024 => Some(s24::SOLUTIONS),
         _ => None,
     }
 }
