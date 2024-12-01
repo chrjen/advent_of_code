@@ -281,7 +281,7 @@ impl<'a> Monkey<'a> {
     }
 }
 
-impl<'a> TryFrom<&str> for Monkey<'a> {
+impl TryFrom<&str> for Monkey<'_> {
     type Error = <super::Number as FromStr>::Err;
 
     fn try_from(value: &str) -> Result<Self, Self::Error> {

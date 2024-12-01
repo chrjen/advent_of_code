@@ -113,10 +113,10 @@ fn _print_ground(universe: &HashSet<(u32, u32)>, mirror: (Option<u32>, Option<u3
     }
 }
 
-fn get_bounds<'a, T: 'a, I>(coords: I) -> (RangeInclusive<T>, RangeInclusive<T>)
+fn get_bounds<'a, T, I>(coords: I) -> (RangeInclusive<T>, RangeInclusive<T>)
 where
     I: Iterator<Item = &'a (T, T)> + Clone,
-    T: Ord + Clone,
+    T: Ord + Clone + 'a,
 {
     let min_x = coords.clone().map(|(x, _)| x).min().unwrap();
     let min_y = coords.clone().map(|(_, y)| y).min().unwrap();

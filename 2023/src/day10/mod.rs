@@ -159,7 +159,7 @@ pub fn solve(input: &[u8]) -> (String, String) {
             let node = node_queue.pop_back().unwrap();
             node_visited.insert(node);
 
-            if field_loop.layout.get(&node).is_none() {
+            if !field_loop.layout.contains_key(&node) {
                 tile_inside.insert(node);
             }
 

@@ -4,7 +4,7 @@ pub const SOLUTION: common::Solution = common::Solution {
     solve: self::solve,
 };
 
-fn is_valid_password(password: &Vec<char>) -> bool {
+fn is_valid_password(password: &[char]) -> bool {
     if password.len() != 8 {
         return false;
     }
@@ -104,23 +104,33 @@ mod tests {
     // Part 1
     #[test]
     fn p1_example_1() {
-        assert!(!is_valid_password(&"hijklmmn".chars().collect()));
+        assert!(!is_valid_password(
+            &"hijklmmn".chars().collect::<Vec<_>>().as_slice()
+        ));
     }
     #[test]
     fn p1_example_2() {
-        assert!(!is_valid_password(&"abbceffg".chars().collect()));
+        assert!(!is_valid_password(
+            &"abbceffg".chars().collect::<Vec<_>>().as_slice()
+        ));
     }
     #[test]
     fn p1_example_3() {
-        assert!(!is_valid_password(&"abbcegjk".chars().collect()));
+        assert!(!is_valid_password(
+            &"abbcegjk".chars().collect::<Vec<_>>().as_slice()
+        ));
     }
     #[test]
     fn p1_example_4() {
-        assert!(is_valid_password(&"abcdffaa".chars().collect()));
+        assert!(is_valid_password(
+            &"abcdffaa".chars().collect::<Vec<_>>().as_slice()
+        ));
     }
     #[test]
     fn p1_example_5() {
-        assert!(is_valid_password(&"ghjaabcc".chars().collect()));
+        assert!(is_valid_password(
+            &"ghjaabcc".chars().collect::<Vec<_>>().as_slice()
+        ));
     }
     example!(p1, p1_example_6, "abcdefgh", "abcdffaa");
     example!(p1, p1_example_7, "ghijklmn", "ghjaabcc");

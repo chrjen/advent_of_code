@@ -44,7 +44,7 @@ pub struct PartRange {
     pub shiny: Range<u32>,
 }
 
-impl<'a> Rule<'a> {
+impl Rule<'_> {
     pub fn is_match(&self, part: &Part) -> Option<Action> {
         match *self {
             Rule::Greater(category, ref value, action) => part
@@ -94,7 +94,7 @@ impl<'a> Rule<'a> {
     }
 }
 
-impl<'a> Workflow<'a> {
+impl Workflow<'_> {
     pub fn process(&self, part: &Part) -> Action {
         self.rules
             .iter()

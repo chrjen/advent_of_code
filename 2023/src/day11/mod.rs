@@ -38,7 +38,7 @@ pub fn solve(input: &[u8]) -> (String, String) {
     let expand_by = |expansion_rate: usize| {
         let x_gaps = &x_gaps;
         let y_gaps = &y_gaps;
-        return move |(x, y): &(usize, usize)| {
+        move |(x, y): &(usize, usize)| {
             let x_expansion: usize = x_gaps
                 .iter()
                 .map(|gap_x| ((x > gap_x) as usize) * (expansion_rate - 1))
@@ -48,7 +48,7 @@ pub fn solve(input: &[u8]) -> (String, String) {
                 .map(|gap_y| ((y > gap_y) as usize) * (expansion_rate - 1))
                 .sum();
             (x + x_expansion, y + y_expansion)
-        };
+        }
     };
 
     // Part 1
@@ -89,10 +89,10 @@ fn _print_universe(universe: &HashSet<(usize, usize)>) {
     }
 }
 
-fn _get_bounds<'a, T: 'a, I>(coords: I) -> (RangeInclusive<T>, RangeInclusive<T>)
+fn _get_bounds<'a, T, I>(coords: I) -> (RangeInclusive<T>, RangeInclusive<T>)
 where
     I: Iterator<Item = &'a (T, T)> + Clone,
-    T: Ord + Clone,
+    T: Ord + Clone + 'a,
 {
     let min_x = coords.clone().map(|(x, _)| x).min().unwrap();
     let min_y = coords.clone().map(|(_, y)| y).min().unwrap();

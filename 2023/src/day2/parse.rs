@@ -10,7 +10,9 @@ use nom::{
 
 use super::{Game, Round};
 
-pub(super) fn parse_cube<'a>(colour: &'a str) -> impl Fn(&'a str) -> IResult<&'a str, (u32, &str)> {
+pub(super) fn parse_cube<'a>(
+    colour: &'a str,
+) -> impl Fn(&'a str) -> IResult<&'a str, (u32, &'a str)> {
     move |input: &'a str| -> IResult<&'a str, (u32, &str)> {
         let separator = tuple((complete::char(','), space0));
         terminated(

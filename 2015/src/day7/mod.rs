@@ -21,6 +21,7 @@ mod tokens {
 
     #[derive(Debug, Clone)]
     pub enum TokenType {
+        #[allow(dead_code)]
         Invalid(String),
         Ident(String),
         Signal(u16),
@@ -45,7 +46,7 @@ mod tokens {
         cur_offset: usize,
     }
 
-    impl<'a> Tokeniser<'a> {
+    impl Tokeniser<'_> {
         pub fn new(mut source: Chars) -> Tokeniser {
             let c = source.next();
             Tokeniser {
@@ -153,7 +154,7 @@ mod tokens {
         }
     }
 
-    impl<'a> Iterator for Tokeniser<'a> {
+    impl Iterator for Tokeniser<'_> {
         type Item = Token;
 
         fn next(&mut self) -> Option<Self::Item> {
@@ -259,7 +260,7 @@ mod parser {
     }
 
     impl<'a> Parser<'a> {
-        pub fn new(mut tokeniser: Tokeniser<'a>) -> Parser {
+        pub fn new(mut tokeniser: Tokeniser<'a>) -> Parser<'a> {
             let cur_token = tokeniser.next();
             let next_token = tokeniser.next();
             Parser {

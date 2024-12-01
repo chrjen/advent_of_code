@@ -197,7 +197,7 @@ pub fn solve(input: &[u8]) -> (String, String) {
     let mut facing = Facing::Right;
     let mut pos: (usize, usize) = {
         let start_x = (min_x..=max_x)
-            .find(|&x| map.get(&(x, min_y)).is_some())
+            .find(|&x| map.contains_key(&(x, min_y)))
             .unwrap();
         (start_x, min_y)
     };

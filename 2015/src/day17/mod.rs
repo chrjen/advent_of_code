@@ -14,18 +14,18 @@ pub const SOLUTION: common::Solution = common::Solution {
 /// When the target reach zero that means we have reached the original target
 /// exactly and we return 1, else return 0 if we reach the end of containers
 /// or target goes below zero.
-fn count_combinations(containers: &Vec<i32>, target: i32) -> (u32, u32) {
+fn count_combinations(containers: &[i32], target: i32) -> (u32, u32) {
     if containers.is_empty() {
         return (0, 0);
     }
 
-    let mut containers = containers.clone();
+    let mut containers = containers.to_owned();
     containers.sort_unstable();
     let mut n_count = vec![0; containers.len() + 1];
 
     fn count(
         n_count: &mut Vec<u32>,
-        containers: &Vec<i32>,
+        containers: &[i32],
         idx: usize,
         target: i32,
         used: usize,
@@ -60,7 +60,13 @@ fn count_combinations(containers: &Vec<i32>, target: i32) -> (u32, u32) {
         total
     }
 
-    let c = count(&mut n_count, &containers, containers.len() - 1, target, 0);
+    let c = count(
+        &mut n_count,
+        containers.as_slice(),
+        containers.len() - 1,
+        target,
+        0,
+    );
     let f = *n_count.iter().find(|x| **x != 0).unwrap();
     (c, f)
 }

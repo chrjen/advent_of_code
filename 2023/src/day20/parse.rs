@@ -71,11 +71,7 @@ pub(super) fn module(input: &str) -> IResult<&str, (&str, Module)> {
 
 pub(super) fn parse_system(input: &str) -> IResult<&str, System> {
     let system_parser = separated_list0(line_ending, module)
-        .map(|v| {
-            v.into_iter()
-                .map(|(name, module)| (name, module))
-                .collect::<HashMap<&str, Module>>()
-        })
+        .map(|v| v.into_iter().collect::<HashMap<&str, Module>>())
         .map(System::new);
 
     all_consuming(system_parser)(input)

@@ -46,7 +46,7 @@ impl<'a> Step<'a> {
     }
 }
 
-impl<'a> Display for Step<'a> {
+impl Display for Step<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self.op {
             Operation::Dash => write!(f, "{}-", self.label)?,

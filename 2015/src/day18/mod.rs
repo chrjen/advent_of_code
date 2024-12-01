@@ -163,7 +163,7 @@ struct GridIter<'a> {
     len: usize,
 }
 
-impl<'a> Iterator for GridIter<'a> {
+impl Iterator for GridIter<'_> {
     type Item = bool;
 
     fn next(&mut self) -> Option<Self::Item> {

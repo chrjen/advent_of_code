@@ -134,7 +134,7 @@ pub struct WorldDisplayColour<'a> {
     world: &'a World,
 }
 
-impl<'a> Display for WorldDisplayColour<'a> {
+impl Display for WorldDisplayColour<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         for y in self.world.source.y..=self.world.floor {
             for x in self.world.left()..=self.world.right() {

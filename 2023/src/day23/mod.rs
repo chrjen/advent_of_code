@@ -113,7 +113,7 @@ pub fn solve(input: &[u8]) -> (String, String) {
                 let tile = trails.map.get(neighbour);
                 let is_blocked = matches!(tile, Some(Tile::Forest));
 
-                !is_blocked && !prev.is_some_and(|prev: Coord| *neighbour == prev)
+                !is_blocked && prev.is_none_or(|prev: Coord| *neighbour != prev)
             })
             .collect::<Vec<_>>();
 

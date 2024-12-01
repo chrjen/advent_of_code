@@ -12,7 +12,7 @@ use nom::{
     IResult, Parser,
 };
 
-pub fn monkeys<'a, T>(input: &'a str) -> IResult<&str, HashMap<&str, T>>
+pub fn monkeys<'a, T>(input: &'a str) -> IResult<&'a str, HashMap<&'a str, T>>
 where
     T: From<(&'a str, char, &'a str)> + TryFrom<&'a str>,
     <T as TryFrom<&'a str>>::Error: fmt::Debug,
@@ -25,7 +25,7 @@ where
     Ok((input, hash_map))
 }
 
-pub fn monkey<'a, T>(input: &'a str) -> IResult<&str, (&str, T)>
+pub fn monkey<'a, T>(input: &'a str) -> IResult<&'a str, (&'a str, T)>
 where
     T: From<(&'a str, char, &'a str)> + TryFrom<&'a str>,
     <T as TryFrom<&'a str>>::Error: fmt::Debug,

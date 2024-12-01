@@ -27,10 +27,3 @@ impl HikingTrails {
         }
     }
 }
-
-#[derive(Debug, Clone)]
-pub struct HikingTrailsRef<'a> {
-    pub start: Coord,
-    pub end: Coord,
-    pub map: &'a HashMap<Coord, Tile>,
-}
