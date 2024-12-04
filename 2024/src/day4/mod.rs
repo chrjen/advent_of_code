@@ -6,37 +6,17 @@ pub const SOLUTION: common::Solution = common::Solution {
 
 use std::collections::HashMap;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-enum Letter {
-    X,
-    M,
-    A,
-    S,
-}
-
-impl Letter {
-    fn from_char(c: char) -> Option<Self> {
-        match c {
-            'X' => Some(Letter::X),
-            'M' => Some(Letter::M),
-            'A' => Some(Letter::A),
-            'S' => Some(Letter::S),
-            _ => None,
-        }
-    }
-}
+use itertools::Itertools;
 
 pub fn solve(input: &[u8]) -> (String, String) {
     let input = String::from_utf8_lossy(input);
     let input = input.as_ref();
 
-    let mut letters: HashMap<(i32, i32), Letter> = HashMap::new();
+    let mut letters: HashMap<(i32, i32), char> = HashMap::new();
 
     for (y, line) in input.lines().enumerate() {
         for (x, c) in line.chars().enumerate() {
-            if let Some(letter) = Letter::from_char(c) {
-                letters.insert(((x + 1) as i32, (y + 1) as i32), letter);
-            }
+            letters.insert(((x + 1) as i32, (y + 1) as i32), c);
         }
     }
     let max_x = letters.keys().map(|(x, _)| x).max().unwrap_or(&1);
@@ -44,7 +24,8 @@ pub fn solve(input: &[u8]) -> (String, String) {
 
     // Part 1
     let mut part1: u32 = 0;
-    let offsets: &[(i32, i32)] = &[
+    let target_word = "XMAS";
+    let directions: &[(i32, i32)] = &[
         (-1, -1),
         (0, -1),
         (1, -1),
@@ -55,50 +36,32 @@ pub fn solve(input: &[u8]) -> (String, String) {
         (1, 1),
     ];
 
-    for y in 1..=*max_y {
-        for x in 1..=*max_x {
-            if !matches!(letters.get(&(x, y)), Some(Letter::X)) {
-                continue;
-            }
-            // "X" found, check each direction for the word "MAS".
-            for (off_x, off_y) in offsets {
-                if matches!(letters.get(&(x + off_x, y + off_y)), Some(Letter::M))
-                    && matches!(
-                        letters.get(&(x + 2 * off_x, y + 2 * off_y)),
-                        Some(Letter::A)
-                    )
-                    && matches!(
-                        letters.get(&(x + 3 * off_x, y + 3 * off_y)),
-                        Some(Letter::S)
-                    )
-                {
-                    part1 += 1;
-                }
-            }
+    for (y, x) in (1..=*max_y).cartesian_product(1..=*max_x) {
+        for (dir_x, dir_y) in directions {
+            (0..)
+                .map(|i| letters.get(&(x + i * dir_x, y + i * dir_y)))
+                .zip(target_word.chars())
+                .all(|(letter, target)| letter.copied().is_some_and(|l| l == target))
+                .then(|| part1 += 1);
         }
     }
 
     // Part 2
     let mut part2: u32 = 0;
-    let offsets: &[(i32, i32)] = &[(-1, -1), (1, -1), (-1, 1), (1, 1)];
+    let target_word = "MAS";
+    let directions: &[(i32, i32)] = &[(-1, -1), (1, -1), (-1, 1), (1, 1)];
 
-    for y in 1..=*max_y {
-        for x in 1..=*max_x {
-            if !matches!(letters.get(&(x, y)), Some(Letter::A)) {
-                continue;
-            }
-            // "A" found, check each diagonal for if it spell "MAS".
-            let mut count = 0;
-            for (off_x, off_y) in offsets {
-                if matches!(letters.get(&(x + off_x, y + off_y)), Some(Letter::M))
-                    && matches!(letters.get(&(x - off_x, y - off_y)), Some(Letter::S))
-                {
-                    count += 1;
-                }
-            }
-            if count == 2 {
-                part2 += 1;
-            }
+    for (y, x) in (1..=*max_y).cartesian_product(1..=*max_x) {
+        let mut count = 0;
+        for (dir_x, dir_y) in directions {
+            (-1..)
+                .map(|i| letters.get(&(x + i * dir_x, y + i * dir_y)))
+                .zip(target_word.chars())
+                .all(|(letter, target)| letter.copied().is_some_and(|l| l == target))
+                .then(|| count += 1);
+        }
+        if count == 2 {
+            part2 += 1;
         }
     }
 
