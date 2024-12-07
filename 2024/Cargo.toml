@@ -7,3 +7,4 @@ edition = "2021"
 common = {path = "../common"}
 itertools = "*"
 nom = "7"
+rstest = "0.23.0"
