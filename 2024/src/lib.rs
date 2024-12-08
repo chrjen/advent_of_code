@@ -5,6 +5,7 @@ pub mod day4;
 pub mod day5;
 pub mod day6;
 pub mod day7;
+pub mod day8;
 
 pub const SOLUTIONS: &[Option<common::Solution>] = &[
     Some(day1::SOLUTION),
@@ -14,7 +15,7 @@ pub const SOLUTIONS: &[Option<common::Solution>] = &[
     Some(day5::SOLUTION),
     Some(day6::SOLUTION),
     Some(day7::SOLUTION),
-    None,
+    Some(day8::SOLUTION),
     None,
     None,
     None,
