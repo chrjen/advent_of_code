@@ -168,29 +168,29 @@ pub fn solve(input: &[u8]) -> (String, String) {
     loop_point.remove(&(start_x, start_y));
     let part2 = loop_point.len();
 
-    println!();
-    for y in 0..=max_y {
-        for x in 0..=max_x {
-            if loop_point.contains(&(x, y)) {
-                print!("O");
-            } else {
-                match map.get(&(x, y)) {
-                    Some(Tile::Wall) => print!("#"),
-                    Some(Tile::Exit) => print!("*"),
-                    None => {
-                        if loop_point.contains(&(x, y)) {
-                            print!("O");
-                        } else if visited.contains(&(x, y)) {
-                            print!("x");
-                        } else {
-                            print!(".");
-                        }
-                    }
-                }
-            }
-        }
-        println!();
-    }
+    // println!();
+    // for y in 0..=max_y {
+    //     for x in 0..=max_x {
+    //         if loop_point.contains(&(x, y)) {
+    //             print!("O");
+    //         } else {
+    //             match map.get(&(x, y)) {
+    //                 Some(Tile::Wall) => print!("#"),
+    //                 Some(Tile::Exit) => print!("*"),
+    //                 None => {
+    //                     if loop_point.contains(&(x, y)) {
+    //                         print!("O");
+    //                     } else if visited.contains(&(x, y)) {
+    //                         print!("x");
+    //                     } else {
+    //                         print!(".");
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     }
+    //     println!();
+    // }
 
     (part1.to_string(), part2.to_string())
 }
