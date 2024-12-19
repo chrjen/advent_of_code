@@ -4,7 +4,10 @@ pub const SOLUTION: common::Solution = common::Solution {
     solve: self::solve,
 };
 
-use std::collections::{HashSet, VecDeque};
+use std::{
+    cmp::Ordering,
+    collections::{HashSet, VecDeque},
+};
 
 use itertools::Itertools;
 use nalgebra::Vector2;
@@ -45,7 +48,6 @@ pub fn solve_(input: &[u8], size: i32, count_fallen: usize) -> (String, String) 
         Vector2::new(0, -1),
     ];
 
-    // Part 1
     'outer: while let Some((cost, current)) = next.pop_front() {
         for offset in OFFSETS {
             let neighbour = current + offset;
@@ -70,53 +72,57 @@ pub fn solve_(input: &[u8], size: i32, count_fallen: usize) -> (String, String) 
     let part1 = next.pop_back().map(|v| v.0);
 
     // Part 2
-    // Go backwards and remove one byte at the time trying to find a path.
-    // When we find a path then the next byte to fall must have been the one to
-    // finally block the exit.
-    let mut blocking_location = None;
-    for i in (0..fall_locations.len()).rev() {
-        let mut next: VecDeque<(u32, Vector2<i32>)> = VecDeque::new();
-        let mut visited: HashSet<Vector2<i32>> = HashSet::new();
-        next.push_back((0, start));
-        visited.insert(start);
+    // Does a binary search to find the first time path finding fails to find
+    // the end location. Uses a built in binary search function in the standard
+    // library. Unfortunately it only works on slices, but I don't feel like
+    // implementing binary search myself right now.
+    let location_index = (0..fall_locations.len())
+        .collect::<Vec<usize>>() // Excessive, but so be it.
+        .binary_search_by(|&i| {
+            let mut next: VecDeque<(u32, Vector2<i32>)> = VecDeque::new();
+            let mut visited: HashSet<Vector2<i32>> = HashSet::new();
+            next.push_back((0, start));
+            visited.insert(start);
 
-        const OFFSETS: &[Vector2<i32>] = &[
-            Vector2::new(1, 0),
-            Vector2::new(0, 1),
-            Vector2::new(-1, 0),
-            Vector2::new(0, -1),
-        ];
+            const OFFSETS: &[Vector2<i32>] = &[
+                Vector2::new(1, 0),
+                Vector2::new(0, 1),
+                Vector2::new(-1, 0),
+                Vector2::new(0, -1),
+            ];
 
-        // Part 1
-        'outer: while let Some((cost, current)) = next.pop_front() {
-            for offset in OFFSETS {
-                let neighbour = current + offset;
+            'outer: while let Some((cost, current)) = next.pop_front() {
+                for offset in OFFSETS {
+                    let neighbour = current + offset;
 
-                if visited.contains(&neighbour)
-                    || fall_locations[..=i].contains(&neighbour)
-                    || !(0..=size).contains(&neighbour.x)
-                    || !(0..=size).contains(&neighbour.y)
-                {
-                    continue;
-                }
+                    if visited.contains(&neighbour)
+                        || fall_locations[..=i].contains(&neighbour)
+                        || !(0..=size).contains(&neighbour.x)
+                        || !(0..=size).contains(&neighbour.y)
+                    {
+                        continue;
+                    }
 
-                visited.insert(neighbour);
-                next.push_back((cost + 1, neighbour));
+                    visited.insert(neighbour);
+                    next.push_back((cost + 1, neighbour));
 
-                if neighbour == end {
-                    break 'outer;
+                    if neighbour == end {
+                        break 'outer;
+                    }
                 }
             }
-        }
 
-        if next.pop_back().is_some() {
-            // We found a path so the next byte must have been the blocking one.
-            blocking_location = fall_locations.get(i + 1);
-            break;
-        }
-    }
+            if next.pop_back().is_some() {
+                Ordering::Less
+            } else {
+                Ordering::Greater
+            }
+        })
+        .unwrap_err(); // Unwrapping here is fine since since we don't use `Ordering::Equal` above.
 
-    let part2 = blocking_location.map(|pos| pos.iter().map(|v| v.to_string()).join(","));
+    let part2 = fall_locations
+        .get(location_index)
+        .map(|v| v.iter().map(|d| d.to_string()).join(","));
 
     // Draw a map.
     // for y in 0..=size {
