@@ -8,5 +8,6 @@ common = {path = "../common"}
 itertools = "*"
 nalgebra = "0.33.2"
 nom = "7"
+rayon = "1.10.0"
 regex = "1.11.1"
 rstest = "0.23.0"

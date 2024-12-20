@@ -1013,6 +1013,7 @@ dependencies = [
  "itertools",
  "nalgebra",
  "nom",
+ "rayon",
  "regex",
  "rstest 0.23.0",
 ]
