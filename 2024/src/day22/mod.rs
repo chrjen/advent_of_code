@@ -6,7 +6,9 @@ pub const SOLUTION: common::Solution = common::Solution {
 
 use std::{collections::HashMap, iter};
 
+use fxhash::{FxBuildHasher, FxHashMap};
 use itertools::Itertools;
+use rayon::prelude::*;
 
 pub fn solve(input: &[u8]) -> (String, String) {
     let input = String::from_utf8_lossy(input);
@@ -35,28 +37,31 @@ pub fn solve(input: &[u8]) -> (String, String) {
             })
     };
 
-    let mut seeds_history: HashMap<(i8, i8, i8, i8), u32> = HashMap::new();
-
     // For each seed we calculate the price for each set of four changes, making
     // sure we only consider the first occurrence of those changes. At the end
     // we should have a map of each set of four changes and how many bananas it
     // would get us. Then we just need to find the maximum.
-    for seed in seeds {
-        let mut seed_history: HashMap<(i8, i8, i8, i8), u32> = HashMap::new();
+    let seeds_history: HashMap<(i8, i8, i8, i8), u32, FxBuildHasher> = seeds
+        .par_iter()
+        .copied()
+        .map(|seed| {
+            let mut seed_history: HashMap<(i8, i8, i8, i8), u32, FxBuildHasher> =
+                FxHashMap::default();
 
-        for (p1, p2, p3, p4) in price_changes(seed).tuple_windows() {
-            let changes = (p1.1, p2.1, p3.1, p4.1);
-            let current_price = p4.0;
-            seed_history.entry(changes).or_insert(current_price);
-        }
+            for (p1, p2, p3, p4) in price_changes(seed).tuple_windows() {
+                let changes = (p1.1, p2.1, p3.1, p4.1);
+                let current_price = p4.0;
+                seed_history.entry(changes).or_insert(current_price);
+            }
 
-        for (key, value) in seed_history.into_iter() {
-            seeds_history
-                .entry(key)
-                .and_modify(|v| *v += value)
-                .or_insert(value);
-        }
-    }
+            seed_history
+        })
+        .reduce(FxHashMap::default, |mut acc, history| {
+            for (key, value) in history.into_iter() {
+                acc.entry(key).and_modify(|v| *v += value).or_insert(value);
+            }
+            acc
+        });
 
     let part2 = seeds_history.values().max().unwrap_or(&0);
 
@@ -101,12 +106,7 @@ mod tests {
 2024",
         "37327623"
     );
-    solution!(
-        p1,
-        p1_solution,
-        "14119253575",
-        ignore = "too slow in debug release"
-    );
+    solution!(p1, p1_solution, "14119253575");
 
     // Part 2
     example!(
@@ -119,10 +119,5 @@ mod tests {
 ",
         "23"
     );
-    solution!(
-        p2,
-        p2_solution,
-        "1600",
-        ignore = "too slow in debug release"
-    );
+    solution!(p2, p2_solution, "1600");
 }
