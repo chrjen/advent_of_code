@@ -2,7 +2,7 @@ use std::fmt::Display;
 
 use itertools::Itertools;
 use ndarray::Array2;
-use num::{rational::Ratio, Signed, Zero};
+use num::{Signed, Zero, rational::Ratio};
 
 pub type Num = Ratio<i128>;
 

@@ -1,4 +1,5 @@
 use nom::{
+    IResult,
     bytes::complete::tag_no_case,
     character::{
         self,
@@ -7,7 +8,6 @@ use nom::{
     },
     multi::separated_list0,
     sequence::{delimited, separated_pair, tuple},
-    IResult,
 };
 
 /// Parses multiple lines of sensor outputs into a `Vec`.

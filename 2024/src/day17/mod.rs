@@ -79,7 +79,7 @@ pub fn solve(input: &[u8]) -> (String, String) {
         for byte in program.iter().rev().copied() {
             for a_left in current.drain(..) {
                 for a_right in 0..8_u64 {
-                    let a = a_left << 3 | a_right;
+                    let a = (a_left << 3) | a_right;
                     let mut ticks = 0..;
                     let mut cpu = Cpu::new(a, 0, 0);
 

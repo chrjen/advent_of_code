@@ -1,12 +1,12 @@
 use std::collections::HashMap;
 
 use nom::{
+    IResult,
     bytes::complete::tag,
     character::complete::{self, alpha1, newline, space0, space1},
     combinator::{map, opt},
     multi::{fold_many0, many1, separated_list1},
     sequence::{delimited, preceded, separated_pair, terminated, tuple},
-    IResult,
 };
 
 use super::{Almanac, MapRange, MapRanges};

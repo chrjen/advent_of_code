@@ -64,7 +64,7 @@ impl FromStr for Snafu<u64> {
                 _ => {
                     return Err(format!(
                         "illegal character '{c}' at index {i} while parsing \"{s}\""
-                    ))
+                    ));
                 }
             }
         }

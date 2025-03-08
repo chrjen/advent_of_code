@@ -27,12 +27,12 @@ pub struct Colour(pub u32);
 impl Colour {
     /// Returns the red component of the colour.
     pub fn red(&self) -> u8 {
-        (self.0 >> 16 & 0xff) as u8
+        ((self.0 >> 16) & 0xff) as u8
     }
 
     /// Returns the red component of the colour.
     pub fn green(&self) -> u8 {
-        (self.0 >> 8 & 0xff) as u8
+        ((self.0 >> 8) & 0xff) as u8
     }
 
     /// Returns the red component of the colour.

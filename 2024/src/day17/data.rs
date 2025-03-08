@@ -323,33 +323,37 @@ mod tests {
     #[test]
     fn test_out_instr_combo() {
         let mut cpu = Cpu::new(0, 0, 0);
-        assert!(cpu
-            .tick(&mut [5, 2])
-            .is_ok_and(|v| v.is_some_and(|v| v == 2)));
+        assert!(
+            cpu.tick(&mut [5, 2])
+                .is_ok_and(|v| v.is_some_and(|v| v == 2))
+        );
     }
 
     #[test]
     fn test_out_instr_combo_a() {
         let mut cpu = Cpu::new(12, 0, 0);
-        assert!(cpu
-            .tick(&mut [5, 4])
-            .is_ok_and(|v| v.is_some_and(|v| v == 4)));
+        assert!(
+            cpu.tick(&mut [5, 4])
+                .is_ok_and(|v| v.is_some_and(|v| v == 4))
+        );
     }
 
     #[test]
     fn test_out_instr_combo_b() {
         let mut cpu = Cpu::new(0, 12, 0);
-        assert!(cpu
-            .tick(&mut [5, 5])
-            .is_ok_and(|v| v.is_some_and(|v| v == 4)));
+        assert!(
+            cpu.tick(&mut [5, 5])
+                .is_ok_and(|v| v.is_some_and(|v| v == 4))
+        );
     }
 
     #[test]
     fn test_out_instr_combo_c() {
         let mut cpu = Cpu::new(0, 0, 12);
-        assert!(cpu
-            .tick(&mut [5, 6])
-            .is_ok_and(|v| v.is_some_and(|v| v == 4)));
+        assert!(
+            cpu.tick(&mut [5, 6])
+                .is_ok_and(|v| v.is_some_and(|v| v == 4))
+        );
     }
 
     #[rstest]

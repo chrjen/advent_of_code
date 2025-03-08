@@ -1,11 +1,11 @@
 use std::rc::Rc;
 
 use nom::{
+    IResult,
     branch::alt,
     bytes::complete::take_while,
     character::complete::{digit1, one_of},
     combinator::{all_consuming, map},
-    IResult,
 };
 
 use super::{Engine, Part};

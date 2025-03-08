@@ -1,9 +1,9 @@
 use nom::{
+    IResult, Parser,
     character::complete::{self, line_ending, space1},
     combinator::all_consuming,
     multi::separated_list0,
     sequence::separated_pair,
-    IResult, Parser,
 };
 
 pub(super) fn parse_line(input: &str) -> IResult<&str, (u32, u32)> {

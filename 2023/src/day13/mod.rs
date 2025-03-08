@@ -43,7 +43,7 @@ fn find_mirror(ground: &HashSet<(u32, u32)>, smudges: usize) -> (Option<u32>, Op
 
         let sets: HashMap<u32, HashSet<_>> = it
             .sorted_by_key(|(u, _)| *u)
-            .group_by(|(u, _)| *u)
+            .chunk_by(|(u, _)| *u)
             .into_iter()
             .map(|(key, group)| (key, group.map(|(_, v)| v).collect()))
             .collect();

@@ -1,5 +1,6 @@
 use fxhash::FxHashMap;
 use nom::{
+    IResult,
     branch::alt,
     bytes::complete::tag,
     character::complete::{
@@ -9,7 +10,6 @@ use nom::{
     error::Error,
     multi::{fold_many1, separated_list1},
     sequence::{delimited, preceded, separated_pair, terminated, tuple},
-    IResult,
 };
 
 use super::data::LogicGate;

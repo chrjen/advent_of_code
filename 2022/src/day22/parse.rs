@@ -1,10 +1,10 @@
 use std::collections::HashMap;
 
 use nom::{
+    Parser,
     branch::alt,
     character::complete::{self, one_of},
     multi::many0,
-    Parser,
 };
 
 use super::{Movement, Tile};

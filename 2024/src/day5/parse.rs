@@ -1,11 +1,11 @@
 use std::collections::{HashMap, HashSet};
 
 use nom::{
+    IResult,
     character::complete::{self, line_ending},
     combinator::{all_consuming, opt},
     multi::{fold_many0, many1, separated_list1},
     sequence::{separated_pair, terminated},
-    IResult,
 };
 
 fn page_ordering_rule(input: &str) -> IResult<&str, (u32, u32)> {

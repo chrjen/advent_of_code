@@ -1,6 +1,6 @@
 [package]
 authors = ["Christer Jensen <chr.code@gmail.com>"]
-edition = "2021"
+edition = "2024"
 name = "chrjen_aoc"
 version = "0.1.0"
 

@@ -1,13 +1,13 @@
 use std::collections::HashMap;
 
 use nom::{
+    IResult, Parser,
     branch::alt,
     bytes::complete::tag,
     character::complete::{self, alpha1, line_ending, space0},
     combinator::{all_consuming, map},
     multi::separated_list0,
     sequence::{delimited, preceded, separated_pair},
-    IResult, Parser,
 };
 
 use super::data::{Module, Pulse, System};

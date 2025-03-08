@@ -1,8 +1,8 @@
 use nom::{
+    IResult,
     character::complete::{self, line_ending, space1},
     combinator::all_consuming,
     multi::{separated_list0, separated_list1},
-    IResult,
 };
 
 pub(super) fn parse_report(input: &str) -> IResult<&str, Vec<i32>> {

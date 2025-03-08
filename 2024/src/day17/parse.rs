@@ -1,10 +1,10 @@
 use nom::{
+    IResult,
     bytes::complete::tag_no_case,
     character::complete::{self, newline, space0, space1},
     error::Error,
     multi::{many0, separated_list1},
     sequence::{delimited, preceded, separated_pair, terminated, tuple},
-    IResult,
 };
 
 use super::data::Cpu;

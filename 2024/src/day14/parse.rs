@@ -1,11 +1,11 @@
 use nalgebra::Vector2;
 use nom::{
+    IResult,
     character::complete::{self, line_ending},
     combinator::all_consuming,
     error::{Error, ErrorKind},
     multi::separated_list0,
     sequence::separated_pair,
-    IResult,
 };
 
 use super::Robot;

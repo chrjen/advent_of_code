@@ -120,11 +120,11 @@ impl<'a> Monkey<'a> {
     pub fn lhs_mut(&mut self) -> Option<&mut &'a str> {
         match self {
             Monkey::Literal(_, _) => None,
-            Monkey::Add(_, ref mut lhs, _) => Some(lhs),
-            Monkey::Sub(_, ref mut lhs, _) => Some(lhs),
-            Monkey::Mul(_, ref mut lhs, _) => Some(lhs),
-            Monkey::Div(_, ref mut lhs, _) => Some(lhs),
-            Monkey::Eq(_, ref mut lhs, _) => Some(lhs),
+            Monkey::Add(_, lhs, _) => Some(lhs),
+            Monkey::Sub(_, lhs, _) => Some(lhs),
+            Monkey::Mul(_, lhs, _) => Some(lhs),
+            Monkey::Div(_, lhs, _) => Some(lhs),
+            Monkey::Eq(_, lhs, _) => Some(lhs),
         }
     }
 
@@ -141,12 +141,12 @@ impl<'a> Monkey<'a> {
 
     pub fn parent_mut(&mut self) -> &mut Option<&'a str> {
         match self {
-            Monkey::Literal(ref mut p, _) => p,
-            Monkey::Add(ref mut p, _, _) => p,
-            Monkey::Sub(ref mut p, _, _) => p,
-            Monkey::Mul(ref mut p, _, _) => p,
-            Monkey::Div(ref mut p, _, _) => p,
-            Monkey::Eq(ref mut p, _, _) => p,
+            Monkey::Literal(p, _) => p,
+            Monkey::Add(p, _, _) => p,
+            Monkey::Sub(p, _, _) => p,
+            Monkey::Mul(p, _, _) => p,
+            Monkey::Div(p, _, _) => p,
+            Monkey::Eq(p, _, _) => p,
         }
     }
 
@@ -165,10 +165,10 @@ impl<'a> Monkey<'a> {
     pub fn rhs_mut(&mut self) -> Option<&mut &'a str> {
         match self {
             Monkey::Literal(_, _) => None,
-            Monkey::Add(_, _, ref mut rhs) => Some(rhs),
-            Monkey::Sub(_, _, ref mut rhs) => Some(rhs),
-            Monkey::Mul(_, _, ref mut rhs) => Some(rhs),
-            Monkey::Div(_, _, ref mut rhs) => Some(rhs),
+            Monkey::Add(_, _, rhs) => Some(rhs),
+            Monkey::Sub(_, _, rhs) => Some(rhs),
+            Monkey::Mul(_, _, rhs) => Some(rhs),
+            Monkey::Div(_, _, rhs) => Some(rhs),
             Monkey::Eq(_, _, rhs) => rhs.as_mut(),
         }
     }

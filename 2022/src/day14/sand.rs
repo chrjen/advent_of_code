@@ -1,8 +1,8 @@
 use std::collections::HashMap;
 use std::fmt::Display;
 
-use crossterm::style::{Color, ResetColor, SetBackgroundColor, SetForegroundColor};
 use crossterm::Command;
+use crossterm::style::{Color, ResetColor, SetBackgroundColor, SetForegroundColor};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Loc {

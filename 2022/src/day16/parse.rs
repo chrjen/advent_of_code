@@ -1,6 +1,7 @@
 // Valve XL has flow rate=0; tunnels lead to valves AA, FA
 
 use nom::{
+    IResult,
     branch::alt,
     bytes::complete::tag_no_case,
     character::{
@@ -10,7 +11,6 @@ use nom::{
     },
     multi::{separated_list0, separated_list1},
     sequence::{delimited, preceded},
-    IResult,
 };
 
 pub type Valve<'a> = (&'a str, u32, Vec<&'a str>);

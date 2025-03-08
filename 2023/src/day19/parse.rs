@@ -1,12 +1,12 @@
 use std::collections::HashMap;
 
 use nom::{
+    IResult, Parser,
     branch::alt,
     character::complete::{self, alpha1, line_ending, one_of},
     combinator::{all_consuming, map},
     multi::separated_list0,
     sequence::{delimited, preceded, separated_pair, tuple},
-    IResult, Parser,
 };
 
 use super::data::{Action, Category, Part, Rule, Workflow};

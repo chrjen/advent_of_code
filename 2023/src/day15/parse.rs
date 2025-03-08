@@ -1,10 +1,10 @@
 use nom::{
+    IResult,
     branch::alt,
     character::complete::{self, alpha1},
     combinator::{all_consuming, map},
     multi::separated_list0,
     sequence::{separated_pair, terminated},
-    IResult,
 };
 
 use super::data::{Operation, Step};

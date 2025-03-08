@@ -1,10 +1,10 @@
 use nom::{
+    IResult,
     bytes::complete::take,
     character::complete::{self, line_ending, one_of, space1},
     combinator::{map, map_parser, map_res},
     multi::{many1, separated_list0},
     sequence::separated_pair,
-    IResult,
 };
 
 use super::{Card, Hand};

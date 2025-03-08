@@ -1,11 +1,11 @@
 use std::collections::HashSet;
 
 use nom::{
+    IResult,
     bytes::complete::{tag, tag_no_case},
     character::complete::{self, space0, space1},
     multi::separated_list1,
     sequence::{delimited, preceded, separated_pair},
-    IResult,
 };
 
 pub(super) fn parse_numbers(input: &str) -> IResult<&str, HashSet<u32>> {

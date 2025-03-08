@@ -58,7 +58,7 @@ pub fn solve(input: &[u8]) -> (String, String) {
     fn update_rope(direction: (i32, i32), rope: &mut [(i32, i32)]) {
         // Update head.
         let (dx, dy) = direction;
-        let ((ref mut head_x, ref mut head_y), rope) = rope.split_first_mut().unwrap();
+        let ((head_x, head_y), rope) = rope.split_first_mut().unwrap();
 
         *head_x += dx;
         *head_y += dy;
@@ -68,7 +68,7 @@ pub fn solve(input: &[u8]) -> (String, String) {
         }
 
         // Update tail.
-        let (ref mut tail_x, ref mut tail_y) = rope.first_mut().unwrap();
+        let (tail_x, tail_y) = rope.first_mut().unwrap();
         let (mut diff_x, mut diff_y) = (*head_x - *tail_x, *head_y - *tail_y);
 
         if diff_x.abs() <= 1 && diff_y.abs() <= 1 {

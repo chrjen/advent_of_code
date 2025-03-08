@@ -1,11 +1,11 @@
 use nom::{
+    IResult,
     branch::alt,
     bytes::complete::{tag, take},
     character::complete::{self},
     combinator::{map_parser, opt, peek, value},
     multi::fold_many0,
     sequence::terminated,
-    IResult,
 };
 
 /// Takes a Vec<T> and pushes item onto the end if and only if item is Some(T).

@@ -65,11 +65,7 @@ impl<'a> Iterator for NeighbourIter<'a> {
         let part = self.engine.layout.get(&coord);
         self.index += 1;
 
-        if part.is_some() {
-            part
-        } else {
-            self.next()
-        }
+        if part.is_some() { part } else { self.next() }
     }
 }
 

@@ -1,4 +1,5 @@
 use nom::{
+    IResult, Parser,
     bytes::complete::tag,
     character::{
         complete::char,
@@ -7,7 +8,6 @@ use nom::{
     combinator::map_res,
     multi::separated_list0,
     sequence::{delimited, separated_pair},
-    IResult, Parser,
 };
 
 pub fn rock_paths_parser<T>(input: &str) -> IResult<&str, Vec<Vec<T>>>

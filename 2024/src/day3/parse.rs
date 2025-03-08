@@ -1,10 +1,10 @@
 use nom::{
+    IResult,
     bytes::complete::{tag, take_until},
     character::complete::{self},
     combinator::map,
     multi::many0,
     sequence::{delimited, pair, separated_pair},
-    IResult,
 };
 
 use super::data::Mul;

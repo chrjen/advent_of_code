@@ -292,14 +292,14 @@ mod parser {
                         return Err(ParseError::new(
                             "unexpected token when parsing statement".to_owned(),
                             ParseErrorType::IncorrectToken(token.clone()),
-                        ))
+                        ));
                     }
                 },
                 None => {
                     return Err(ParseError::new(
                         "unexpected end of stream while parsing statement".to_owned(),
                         ParseErrorType::EndOfStream,
-                    ))
+                    ));
                 }
             }
             self.advance();

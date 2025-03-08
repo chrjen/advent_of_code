@@ -1,4 +1,4 @@
-use std::sync::{atomic::AtomicU32, Arc};
+use std::sync::{Arc, atomic::AtomicU32};
 
 mod parse;
 
@@ -49,11 +49,7 @@ pub struct Blueprint {
 fn div_ceil(lhs: u32, rhs: u32) -> u32 {
     let d = lhs / rhs;
     let r = lhs % rhs;
-    if r > 0 {
-        d + 1
-    } else {
-        d
-    }
+    if r > 0 { d + 1 } else { d }
 }
 
 /// Recursively goes through all possible states searching for the best answer.

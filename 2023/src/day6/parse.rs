@@ -1,12 +1,12 @@
 use std::str::FromStr;
 
 use nom::{
+    IResult,
     bytes::complete::tag_no_case,
     character::complete::{self, digit1, line_ending, space0, space1},
     combinator::{map_res, opt},
     multi::{fold_many0, separated_list1},
     sequence::{delimited, preceded},
-    IResult,
 };
 
 use super::Race;

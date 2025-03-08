@@ -26,9 +26,9 @@ struct Round {
 impl Game {
     fn is_possible(&self) -> bool {
         self.rounds.iter().fold(true, |acc, round| {
-            acc && round.red.map_or(true, |count| count <= MAX_RED)
-                && round.green.map_or(true, |count| count <= MAX_GREEN)
-                && round.blue.map_or(true, |count| count <= MAX_BLUE)
+            acc && round.red.is_none_or(|count| count <= MAX_RED)
+                && round.green.is_none_or(|count| count <= MAX_GREEN)
+                && round.blue.is_none_or(|count| count <= MAX_BLUE)
         })
     }
 

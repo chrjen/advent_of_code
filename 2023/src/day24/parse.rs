@@ -1,10 +1,10 @@
 use nom::{
+    IResult,
     bytes::complete::tag,
     character::complete::{self, digit1, line_ending, space0},
     combinator::{all_consuming, map, map_res, opt, recognize},
     multi::separated_list0,
     sequence::{delimited, separated_pair, terminated, tuple},
-    IResult,
 };
 
 use super::data::{Num, Trajectory};

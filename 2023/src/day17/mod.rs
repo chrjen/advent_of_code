@@ -140,7 +140,7 @@ fn solve_part2(heat_map: &HashMap<(usize, usize), u32>) -> u32 {
                 if neighbour_dir == current.dir {
                     let is_better = heat_losses
                         .get(&(neighbour, neighbour_dir, current.straight + 1))
-                        .map_or(true, |&(hl, _)| new_heat_loss < hl);
+                        .is_none_or(|&(hl, _)| new_heat_loss < hl);
                     if !is_better {
                         continue;
                     }
@@ -161,7 +161,7 @@ fn solve_part2(heat_map: &HashMap<(usize, usize), u32>) -> u32 {
                 } else {
                     let is_better = heat_losses
                         .get(&(neighbour, neighbour_dir, 0))
-                        .map_or(true, |&(hl, _)| new_heat_loss < hl);
+                        .is_none_or(|&(hl, _)| new_heat_loss < hl);
                     if !is_better {
                         continue;
                     }
@@ -260,7 +260,7 @@ fn solve_part1(heat_map: &HashMap<(usize, usize), u32>) -> u32 {
                 if neighbour_dir == current.dir {
                     let is_better = heat_losses
                         .get(&(neighbour, neighbour_dir, current.straight + 1))
-                        .map_or(true, |&(hl, _)| new_heat_loss < hl);
+                        .is_none_or(|&(hl, _)| new_heat_loss < hl);
                     if is_better {
                         heat_losses.insert(
                             (neighbour, current.dir, current.straight + 1),
@@ -280,7 +280,7 @@ fn solve_part1(heat_map: &HashMap<(usize, usize), u32>) -> u32 {
                 } else {
                     let is_better = heat_losses
                         .get(&(neighbour, neighbour_dir, 0))
-                        .map_or(true, |&(hl, _)| new_heat_loss < hl);
+                        .is_none_or(|&(hl, _)| new_heat_loss < hl);
                     if is_better {
                         heat_losses.insert(
                             (neighbour, neighbour_dir, 0),

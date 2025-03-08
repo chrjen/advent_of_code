@@ -1,9 +1,9 @@
 use nom::{
+    IResult,
     character::complete::{self, line_ending, space0, space1},
     combinator::all_consuming,
     multi::{separated_list0, separated_list1},
     sequence::{delimited, separated_pair},
-    IResult,
 };
 
 fn arguments(input: &str) -> IResult<&str, Vec<i64>> {

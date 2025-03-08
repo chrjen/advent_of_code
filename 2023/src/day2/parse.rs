@@ -1,11 +1,11 @@
 use nom::{
+    IResult,
     branch::alt,
     bytes::complete::{tag_no_case, take_till},
     character::complete::{self, newline, space0, space1},
     combinator::{map_parser, opt},
     multi::separated_list1,
     sequence::{delimited, terminated, tuple},
-    IResult,
 };
 
 use super::{Game, Round};

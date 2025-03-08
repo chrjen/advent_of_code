@@ -1,9 +1,9 @@
 use nom::{
+    IResult, Parser,
     character::complete::{self, line_ending, one_of, space0},
     combinator::{all_consuming, map, map_res},
     multi::separated_list0,
     sequence::{delimited, preceded, terminated, tuple},
-    IResult, Parser,
 };
 
 use super::data::{Colour, DigStep, Dir};

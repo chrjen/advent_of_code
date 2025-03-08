@@ -1,9 +1,9 @@
 use nom::{
+    IResult,
     character::complete::{self, line_ending, space0},
     combinator::{all_consuming, map},
     multi::separated_list0,
     sequence::{delimited, separated_pair, terminated, tuple},
-    IResult,
 };
 
 use super::data::Block;

@@ -1,12 +1,12 @@
 use std::collections::HashMap;
 
 use nom::{
+    IResult,
     bytes::complete::take_till,
     character::complete::{self, alphanumeric1, line_ending, one_of, space0},
     combinator::{all_consuming, map, opt},
     multi::{fold_many0, many0},
     sequence::{delimited, separated_pair, terminated},
-    IResult,
 };
 
 use super::{Direction, Map, Node};

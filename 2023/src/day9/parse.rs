@@ -1,9 +1,9 @@
 use nom::{
+    IResult, Parser,
     character::complete::{self, line_ending, space1},
     combinator::{all_consuming, opt},
     multi::{many0, separated_list1},
     sequence::terminated,
-    IResult, Parser,
 };
 
 use super::Sequence;

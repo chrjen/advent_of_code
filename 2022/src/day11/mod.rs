@@ -132,11 +132,7 @@ pub fn solve(input: &[u8]) -> (String, String) {
                     modulus = modulus.lcm(&div);
 
                     move |item| {
-                        if item % div == 0 {
-                            t
-                        } else {
-                            f
-                        }
+                        if item % div == 0 { t } else { f }
                     }
                 },
             }

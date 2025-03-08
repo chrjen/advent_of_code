@@ -135,7 +135,7 @@ pub fn solve(input: &[u8]) -> (String, String) {
             // println!("partition: {partition}/{num_partitions}");
             let (mut elf, mut elephant): (VecDeque<_>, VecDeque<_>) =
                 others.iter().copied().enumerate().partition_map(|(i, n)| {
-                    if partition & 1 << i == 0 {
+                    if partition & (1 << i) == 0 {
                         Either::Left(n)
                     } else {
                         Either::Right(n)

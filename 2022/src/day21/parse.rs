@@ -1,6 +1,7 @@
 use std::{collections::HashMap, fmt};
 
 use nom::{
+    IResult, Parser,
     branch::alt,
     bytes::complete::take_while1,
     character::{
@@ -9,7 +10,6 @@ use nom::{
     },
     multi::separated_list0,
     sequence::{delimited, terminated, tuple},
-    IResult, Parser,
 };
 
 pub fn monkeys<'a, T>(input: &'a str) -> IResult<&'a str, HashMap<&'a str, T>>

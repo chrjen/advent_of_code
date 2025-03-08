@@ -1,9 +1,9 @@
 use nom::{
+    IResult,
     character::complete::{self, alpha1, line_ending, multispace0, space0},
     error::Error,
     multi::separated_list1,
     sequence::{delimited, separated_pair},
-    IResult,
 };
 
 fn towel_patterns(input: &str) -> IResult<&str, Vec<&str>> {
