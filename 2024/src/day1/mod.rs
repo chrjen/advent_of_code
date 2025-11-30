@@ -6,6 +6,47 @@ pub const SOLUTION: common::Solution = common::Solution {
 
 mod parse;
 
+trait Solver {
+    fn solve_partial() -> Box<dyn PartSolver>;
+}
+
+trait PartSolver {
+    fn solve_part1(&self) -> u32;
+    fn solve_part2(&self) -> u32;
+}
+
+struct Data {
+    left_list: Vec<u32>,
+    right_list: Vec<u32>,
+}
+
+impl PartSolver for Data {
+    fn solve_part1(&self) -> u32 {
+        return self
+            .left_list
+            .iter()
+            .zip(self.right_list.iter())
+            .map(|(lhs, rhs)| lhs.abs_diff(*rhs))
+            .sum();
+    }
+
+    fn solve_part2(&self) -> u32 {
+        let freq_map = self
+            .right_list
+            .iter()
+            .fold(HashMap::<u32, u32>::new(), |mut acc, value| {
+                *acc.entry(*value).or_insert(0) += 1;
+                acc
+            });
+
+        return self
+            .left_list
+            .iter()
+            .map(|value| value * freq_map.get(value).unwrap_or(&0))
+            .sum();
+    }
+}
+
 use std::collections::HashMap;
 
 pub fn solve(input: &[u8]) -> (String, String) {
@@ -18,27 +59,45 @@ pub fn solve(input: &[u8]) -> (String, String) {
     left_list.sort_unstable();
     right_list.sort_unstable();
 
-    // Part 1
-    let part1: u32 = left_list
+    let common = Common {
+        left_list,
+        right_list,
+    };
+
+    (
+        solve_part1(&common).to_string(),
+        solve_part2(&common).to_string(),
+    )
+}
+
+struct Common {
+    left_list: Vec<u32>,
+    right_list: Vec<u32>,
+}
+
+fn solve_part1(common: &Common) -> u32 {
+    return common
+        .left_list
         .iter()
-        .zip(right_list.iter())
+        .zip(common.right_list.iter())
         .map(|(lhs, rhs)| lhs.abs_diff(*rhs))
         .sum();
+}
 
-    // Part 2
-    let freq_map = right_list
-        .into_iter()
+fn solve_part2(common: &Common) -> u32 {
+    let freq_map = common
+        .right_list
+        .iter()
         .fold(HashMap::<u32, u32>::new(), |mut acc, value| {
-            *acc.entry(value).or_insert(0) += 1;
+            *acc.entry(*value).or_insert(0) += 1;
             acc
         });
 
-    let part2: u32 = left_list
+    return common
+        .left_list
         .iter()
         .map(|value| value * freq_map.get(value).unwrap_or(&0))
         .sum();
-
-    (part1.to_string(), part2.to_string())
 }
 
 #[cfg(test)]
