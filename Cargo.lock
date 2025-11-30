@@ -210,6 +210,10 @@ name = "common"
 version = "0.1.0"
 
 [[package]]
+name = "common_v2"
+version = "0.1.0"
+
+[[package]]
 name = "crossbeam-deque"
 version = "0.8.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1249,7 +1253,7 @@ dependencies = [
 name = "solutions_2025"
 version = "0.1.0"
 dependencies = [
- "common",
+ "common_v2",
  "miette",
  "serde",
  "serde_json",

@@ -1,0 +1,157 @@
+pub mod prelude {
+    pub use super::{Output, PartSolver, Solver};
+}
+
+use std::fmt::Display;
+
+#[derive(Debug, PartialEq, Eq)]
+pub enum Output {
+    UInt(u128),
+    Int(i128),
+    String(Box<str>),
+    NoSolution,
+    Todo,
+}
+
+impl From<u128> for Output {
+    fn from(value: u128) -> Self {
+        Self::UInt(value)
+    }
+}
+
+impl From<u64> for Output {
+    fn from(value: u64) -> Self {
+        Self::UInt(value.into())
+    }
+}
+
+impl From<u32> for Output {
+    fn from(value: u32) -> Self {
+        Self::UInt(value.into())
+    }
+}
+
+impl From<u16> for Output {
+    fn from(value: u16) -> Self {
+        Self::UInt(value.into())
+    }
+}
+
+impl From<u8> for Output {
+    fn from(value: u8) -> Self {
+        Self::UInt(value.into())
+    }
+}
+
+impl From<i128> for Output {
+    fn from(value: i128) -> Self {
+        Self::Int(value)
+    }
+}
+
+impl From<i64> for Output {
+    fn from(value: i64) -> Self {
+        Self::Int(value.into())
+    }
+}
+
+impl From<i32> for Output {
+    fn from(value: i32) -> Self {
+        Self::Int(value.into())
+    }
+}
+
+impl From<i16> for Output {
+    fn from(value: i16) -> Self {
+        Self::Int(value.into())
+    }
+}
+
+impl From<i8> for Output {
+    fn from(value: i8) -> Self {
+        Self::Int(value.into())
+    }
+}
+
+impl From<Box<str>> for Output {
+    fn from(value: Box<str>) -> Self {
+        Self::String(value)
+    }
+}
+
+impl From<&str> for Output {
+    fn from(value: &str) -> Self {
+        Self::String(value.into())
+    }
+}
+
+impl From<String> for Output {
+    fn from(value: String) -> Self {
+        Self::String(value.into())
+    }
+}
+
+impl Display for Output {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Output::UInt(x) => write!(f, "{}", x),
+            Output::Int(x) => write!(f, "{}", x),
+            Output::String(x) => write!(f, "{}", x),
+            Output::NoSolution => write!(f, "No solution"),
+            Output::Todo => write!(f, "!todo"),
+        }
+    }
+}
+
+pub trait Solver {
+    fn title() -> &'static str;
+    fn input() -> &'static [u8];
+    fn initial(input: &[u8]) -> Box<dyn PartSolver>;
+}
+
+pub trait PartSolver {
+    fn part1(&self) -> Output;
+    fn part2(&self) -> Output;
+}
+
+#[macro_export]
+macro_rules! example {
+    (p1, $name:ident, $input:literal, $output:literal $(, $attr:meta),*) => {
+        #[test]
+        $(#[$attr])*
+        fn $name() {
+            println!("input: {}", $input);
+            let result = Solution::initial(str::as_bytes($input)).part1();
+            assert_eq!(result, Output::from($output));
+        }
+    };
+    (p2, $name:ident, $input:literal, $output:literal $(, $attr:meta),*) => {
+        #[test]
+        $(#[$attr])*
+        fn $name() {
+            println!("input: {}", $input);
+            let result = Solution::initial(str::as_bytes($input)).part2();
+            assert_eq!(result, Output::from($output));
+        }
+    };
+}
+
+#[macro_export]
+macro_rules! solution {
+    (p1, $name:ident, $output:literal $(, $attr:meta),*) => {
+        #[test]
+        $(#[$attr])*
+        fn $name() {
+            let result = Solution::initial(Solution::input()).part1();
+            assert_eq!(result, Output::from($output));
+        }
+    };
+    (p2, $name:ident, $output:literal $(, $attr:meta),*) => {
+        #[test]
+        $(#[$attr])*
+        fn $name() {
+            let result = Solution::initial(Solution::input()).part2();
+            assert_eq!(result, Output::from($output));
+        }
+    };
+}

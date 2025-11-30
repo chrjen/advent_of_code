@@ -1,8 +1,6 @@
 use serde_json::Value;
-use skeleton::{PartSolver, Solver};
 
-use crate::day1::skeleton::Output;
-use crate::skeleton;
+use common_v2::prelude::*;
 
 pub struct Solution;
 
@@ -96,6 +94,7 @@ impl PartSolver for State {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use common_v2::{example, solution};
 
     #[test]
     fn p1_example_1() {
@@ -104,9 +103,14 @@ mod tests {
         assert_eq!(result, Output::from(142));
     }
 
+    example!(p1, p1_example_2, "1abc3", 300);
+    solution!(p1, p1_solution, 200);
+
     #[test]
-    fn p1_solution() {
+    fn p2_solution() {
         let result = Solution::initial(Solution::input()).part1();
         assert_eq!(result, Output::from("5227"));
     }
+
+    example!(p2, p2_example_1, "1abc3", "200");
 }

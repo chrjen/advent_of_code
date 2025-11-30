@@ -1,11 +1,9 @@
 mod day1;
 mod day2;
 
-pub mod skeleton;
+use common_v2::prelude::*;
 
 use std::process::Termination;
-
-use skeleton::Solver;
 
 use miette::{Diagnostic, Result};
 
@@ -42,5 +40,3 @@ fn main() -> Result<()> {
     Err(day2::run().unwrap_err())?;
     Ok(())
 }
-
-fn kekky() {}
