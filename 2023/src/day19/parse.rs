@@ -39,7 +39,7 @@ pub(super) fn parts(input: &str) -> IResult<&str, Box<[Part]>> {
     map(separated_list0(line_ending, part), |v| v.into_boxed_slice())(input)
 }
 
-pub(super) fn action(input: &str) -> IResult<&str, Action> {
+pub(super) fn action(input: &str) -> IResult<&str, Action<'_>> {
     map(alpha1, |action| match action {
         "A" => Action::Accept,
         "R" => Action::Reject,
@@ -47,7 +47,7 @@ pub(super) fn action(input: &str) -> IResult<&str, Action> {
     })(input)
 }
 
-pub(super) fn rule(input: &str) -> IResult<&str, Rule> {
+pub(super) fn rule(input: &str) -> IResult<&str, Rule<'_>> {
     let compare_rule = tuple((
         one_of("xmas"),
         one_of("><"),
@@ -74,13 +74,13 @@ pub(super) fn rule(input: &str) -> IResult<&str, Rule> {
     alt((compare_rule, default_rule))(input)
 }
 
-pub(super) fn rules(input: &str) -> IResult<&str, Box<[Rule]>> {
+pub(super) fn rules(input: &str) -> IResult<&str, Box<[Rule<'_>]>> {
     map(separated_list0(complete::char(','), rule), |v| {
         v.into_boxed_slice()
     })(input)
 }
 
-pub(super) fn workflow(input: &str) -> IResult<&str, Workflow> {
+pub(super) fn workflow(input: &str) -> IResult<&str, Workflow<'_>> {
     let rules = delimited(complete::char('{'), rules, complete::char('}'));
     map(tuple((alpha1, rules)), |(name, rules)| Workflow {
         name,
@@ -88,7 +88,7 @@ pub(super) fn workflow(input: &str) -> IResult<&str, Workflow> {
     })(input)
 }
 
-pub(super) fn workflows(input: &str) -> IResult<&str, HashMap<&str, Workflow>> {
+pub(super) fn workflows(input: &str) -> IResult<&str, HashMap<&str, Workflow<'_>>> {
     map(separated_list0(line_ending, workflow), |v| {
         v.into_iter()
             .map(|workflow| (workflow.name, workflow))
@@ -97,7 +97,9 @@ pub(super) fn workflows(input: &str) -> IResult<&str, HashMap<&str, Workflow>> {
 }
 
 #[allow(clippy::type_complexity)]
-pub(super) fn parse_input(input: &str) -> IResult<&str, (HashMap<&str, Workflow>, Box<[Part]>)> {
+pub(super) fn parse_input(
+    input: &str,
+) -> IResult<&str, (HashMap<&str, Workflow<'_>>, Box<[Part]>)> {
     all_consuming(separated_pair(
         workflows,
         tuple((line_ending, line_ending)),

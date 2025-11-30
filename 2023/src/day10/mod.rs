@@ -35,31 +35,31 @@ pub fn solve(input: &[u8]) -> (String, String) {
 
     while !tile_queue.is_empty() {
         let (coord, prev_coord, from, distance) = tile_queue.pop_back().unwrap();
-        if let Some(pipe) = field.layout.get(&coord) {
-            if let Some((new_coord, new_from)) = pipe.travel(coord, from) {
-                history.insert(coord, (prev_coord, from, distance + 1));
-                if new_coord == field.start {
-                    history.insert(new_coord, (coord, from, distance + 2));
-                    loop_length = loop_length.max(distance + 2);
+        if let Some(pipe) = field.layout.get(&coord)
+            && let Some((new_coord, new_from)) = pipe.travel(coord, from)
+        {
+            history.insert(coord, (prev_coord, from, distance + 1));
+            if new_coord == field.start {
+                history.insert(new_coord, (coord, from, distance + 2));
+                loop_length = loop_length.max(distance + 2);
 
-                    let last = coord;
-                    let mut from = from;
-                    let mut coord = last;
-                    loop {
-                        if coord == field.start {
-                            field_loop
-                                .layout
-                                .insert(coord, Pipe::from_directions(new_from, from));
-                            break;
-                        }
-                        let pipe = field.layout.get(&coord).copied().unwrap();
-                        field_loop.layout.insert(coord, pipe);
-                        (coord, from, _) = history.get(&coord).copied().unwrap();
+                let last = coord;
+                let mut from = from;
+                let mut coord = last;
+                loop {
+                    if coord == field.start {
+                        field_loop
+                            .layout
+                            .insert(coord, Pipe::from_directions(new_from, from));
+                        break;
                     }
-                    break;
+                    let pipe = field.layout.get(&coord).copied().unwrap();
+                    field_loop.layout.insert(coord, pipe);
+                    (coord, from, _) = history.get(&coord).copied().unwrap();
                 }
-                tile_queue.push_back((new_coord, coord, new_from, distance + 1))
+                break;
             }
+            tile_queue.push_back((new_coord, coord, new_from, distance + 1))
         }
     }
 

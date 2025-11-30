@@ -90,7 +90,7 @@ fn run_specific_day(solutions: &[Option<Solution>], day: u32, path: Option<PathB
 
         if let Some(path) = path {
             // Read in custom input from user.
-            if path == PathBuf::from("-") {
+            if *path == *PathBuf::from("-") {
                 // Read input from stdin.
                 let result = io::stdin().read_to_end(&mut buf);
                 if result.is_err() {

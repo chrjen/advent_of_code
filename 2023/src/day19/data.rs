@@ -45,7 +45,7 @@ pub struct PartRange {
 }
 
 impl Rule<'_> {
-    pub fn is_match(&self, part: &Part) -> Option<Action> {
+    pub fn is_match(&self, part: &Part) -> Option<Action<'_>> {
         match *self {
             Rule::Greater(category, ref value, action) => part
                 .category_value(category)
@@ -65,7 +65,7 @@ impl Rule<'_> {
     /// to the entire range of values instead. This returns the matched portion
     /// of the ranges first, then the part of the ranges that didn't match,
     /// and lastly the action to be taken.
-    pub fn match_range(&self, mut part: PartRange) -> (PartRange, PartRange, Action) {
+    pub fn match_range(&self, mut part: PartRange) -> (PartRange, PartRange, Action<'_>) {
         let mut non_match = PartRange {
             cool: 1..1,
             musical: 1..1,
@@ -95,7 +95,7 @@ impl Rule<'_> {
 }
 
 impl Workflow<'_> {
-    pub fn process(&self, part: &Part) -> Action {
+    pub fn process(&self, part: &Part) -> Action<'_> {
         self.rules
             .iter()
             .map(|rule| rule.is_match(part))

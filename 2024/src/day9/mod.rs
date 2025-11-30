@@ -18,7 +18,7 @@ pub fn solve(input: &[u8]) -> (String, String) {
         .collect();
 
     // Disk map need to have equal number of files and free space.
-    if disk_map.len() % 2 != 0 {
+    if !disk_map.len().is_multiple_of(2) {
         disk_map.push(0);
     }
     let disk_map = disk_map;
@@ -105,21 +105,21 @@ pub fn solve(input: &[u8]) -> (String, String) {
             .iter_mut()
             .find_position(|other| other.padding >= file.len);
 
-        if let Some((other_offset, other_file)) = found {
-            if other_offset < offset {
-                let total_size = file.len + file.padding;
-                file.padding = other_file.padding - file.len;
-                other_file.padding = 0;
+        if let Some((other_offset, other_file)) = found
+            && other_offset < offset
+        {
+            let total_size = file.len + file.padding;
+            file.padding = other_file.padding - file.len;
+            other_file.padding = 0;
 
-                if other_offset + 1 == offset {
-                    file.padding += total_size;
-                } else if let Some(f) = files_table.get_mut(offset - 1) {
-                    f.padding += total_size;
-                }
-
-                files_table.remove(offset);
-                files_table.insert(other_offset + 1, file);
+            if other_offset + 1 == offset {
+                file.padding += total_size;
+            } else if let Some(f) = files_table.get_mut(offset - 1) {
+                f.padding += total_size;
             }
+
+            files_table.remove(offset);
+            files_table.insert(other_offset + 1, file);
         }
     }
 

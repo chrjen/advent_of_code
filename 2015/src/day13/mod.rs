@@ -34,7 +34,7 @@ pub fn solve(input: &[u8]) -> (String, String) {
             permute_(k - 1, v, f);
 
             for i in 0..k - 1 {
-                if k % 2 == 0 {
+                if k.is_multiple_of(2) {
                     v.swap(i, k - 1);
                 } else {
                     v.swap(0, k - 1);

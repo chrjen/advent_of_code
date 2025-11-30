@@ -35,7 +35,7 @@ fn pages_to_produce(input: &str) -> IResult<&str, Vec<Vec<u32>>> {
 }
 
 type PrintQueue<'a> = IResult<&'a str, (HashMap<u32, HashSet<u32>>, Vec<Vec<u32>>)>;
-pub(super) fn parse_print_queue(input: &str) -> PrintQueue {
+pub(super) fn parse_print_queue(input: &str) -> PrintQueue<'_> {
     all_consuming(separated_pair(
         page_ordering_rules,
         line_ending,

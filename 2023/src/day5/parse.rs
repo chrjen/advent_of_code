@@ -49,7 +49,7 @@ pub(super) fn parse_map_ranges(input: &str) -> IResult<&str, (&str, &str, MapRan
     parsed
 }
 
-pub(super) fn parse_almanac(input: &str) -> IResult<&str, Almanac> {
+pub(super) fn parse_almanac(input: &str) -> IResult<&str, Almanac<'_>> {
     let (input, seeds) = terminated(parse_seeds, tag("\n\n"))(input)?;
 
     let (input, maps) = fold_many0(

@@ -15,6 +15,6 @@ fn towel_designs(input: &str) -> IResult<&str, Vec<&str>> {
 }
 
 type Towels<'a> = (Vec<&'a str>, Vec<&'a str>);
-pub(super) fn parse_input(input: &str) -> Result<Towels, nom::Err<Error<&str>>> {
+pub(super) fn parse_input(input: &str) -> Result<Towels<'_>, nom::Err<Error<&str>>> {
     separated_pair(towel_patterns, multispace0, towel_designs)(input).map(|(_, v)| v)
 }

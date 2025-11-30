@@ -15,7 +15,7 @@ pub(super) fn parse_instructions(input: &str) -> IResult<&str, Vec<Direction>> {
     many0(map(one_of("RrLl"), |c| Direction::try_from(c).unwrap()))(input)
 }
 
-pub(super) fn parse_node(input: &str) -> IResult<&str, (&str, Node)> {
+pub(super) fn parse_node(input: &str) -> IResult<&str, (&str, Node<'_>)> {
     let equal = delimited(space0, complete::char('='), space0);
     let comma = delimited(space0, complete::char(','), space0);
     let node_parser = map(
@@ -29,7 +29,7 @@ pub(super) fn parse_node(input: &str) -> IResult<&str, (&str, Node)> {
     separated_pair(alphanumeric1, equal, node_parser)(input)
 }
 
-pub(super) fn parse_map(input: &str) -> IResult<&str, Map> {
+pub(super) fn parse_map(input: &str) -> IResult<&str, Map<'_>> {
     let (input, instructions) = parse_instructions(input)?;
     let (input, _) = take_till(|c| c != '\n')(input)?;
     let (input, nodes) = all_consuming(fold_many0(

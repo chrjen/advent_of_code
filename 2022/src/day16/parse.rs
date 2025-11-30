@@ -16,12 +16,12 @@ use nom::{
 pub type Valve<'a> = (&'a str, u32, Vec<&'a str>);
 
 /// Parses multiple lines of valve specifications into a `Vec`.
-pub fn valve_specs_parser(input: &str) -> IResult<&str, Vec<Valve>> {
+pub fn valve_specs_parser(input: &str) -> IResult<&str, Vec<Valve<'_>>> {
     separated_list0(line_ending, valve_spec_parser)(input)
 }
 
 /// Parses a single line of valve specification.
-pub fn valve_spec_parser(input: &str) -> IResult<&str, Valve> {
+pub fn valve_spec_parser(input: &str) -> IResult<&str, Valve<'_>> {
     let (input, name) = preceded(tag_no_case("valve "), alpha1)(input)?;
     let (input, flow_rate) =
         preceded(tag_no_case(" has flow rate="), character::complete::u32)(input)?;

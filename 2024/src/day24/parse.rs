@@ -37,7 +37,7 @@ fn logic_inputs(input: &str) -> IResult<&str, FxHashMap<&str, bool>> {
     )(input)
 }
 
-fn logic_gate(input: &str) -> IResult<&str, LogicGate> {
+fn logic_gate(input: &str) -> IResult<&str, LogicGate<'_>> {
     let operation = alt((tag("AND"), tag("OR"), tag("XOR")));
     let (input, (left, op, right, output)) = tuple((
         alphanumeric1,
@@ -54,11 +54,11 @@ fn logic_gate(input: &str) -> IResult<&str, LogicGate> {
     }
 }
 
-fn logic_gates(input: &str) -> IResult<&str, Vec<LogicGate>> {
+fn logic_gates(input: &str) -> IResult<&str, Vec<LogicGate<'_>>> {
     separated_list1(line_ending, logic_gate)(input)
 }
 
 type LogicCircuit<'a> = (FxHashMap<&'a str, bool>, Vec<LogicGate<'a>>);
-pub(super) fn parse_input(input: &str) -> Result<LogicCircuit, nom::Err<Error<&str>>> {
+pub(super) fn parse_input(input: &str) -> Result<LogicCircuit<'_>, nom::Err<Error<&str>>> {
     separated_pair(logic_inputs, multispace0, logic_gates)(input).map(|(_, v)| v)
 }

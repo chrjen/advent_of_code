@@ -23,7 +23,7 @@ pub fn solve(input: &[u8]) -> (String, String) {
         .sorted_unstable()
         .unique()
         .tuple_windows()
-        .flat_map(|(x0, x1)| (x0 + 1..*x1))
+        .flat_map(|(x0, x1)| x0 + 1..*x1)
         .collect::<Vec<_>>();
 
     let y_gaps = galaxies
@@ -32,7 +32,7 @@ pub fn solve(input: &[u8]) -> (String, String) {
         .sorted_unstable()
         .unique()
         .tuple_windows()
-        .flat_map(|(y0, y1)| (y0 + 1..*y1))
+        .flat_map(|(y0, y1)| y0 + 1..*y1)
         .collect::<Vec<_>>();
 
     let expand_by = |expansion_rate: usize| {

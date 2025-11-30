@@ -105,7 +105,7 @@ impl World {
     }
 
     #[allow(dead_code)]
-    pub fn display_colour(&self) -> WorldDisplayColour {
+    pub fn display_colour(&self) -> WorldDisplayColour<'_> {
         WorldDisplayColour { world: self }
     }
 

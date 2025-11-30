@@ -26,7 +26,7 @@ impl Engine {
         }
     }
 
-    fn neighbours(&self, x: usize, y: usize) -> NeighbourIter {
+    fn neighbours(&self, x: usize, y: usize) -> NeighbourIter<'_> {
         NeighbourIter {
             engine: self,
             x,

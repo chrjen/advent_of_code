@@ -20,14 +20,14 @@ pub(super) fn outputs(input: &str) -> IResult<&str, Vec<&str>> {
     separated_list0(spaced_separator(","), alpha1)(input)
 }
 
-pub(super) fn broadcaster(input: &str) -> IResult<&str, (&str, Module)> {
+pub(super) fn broadcaster(input: &str) -> IResult<&str, (&str, Module<'_>)> {
     map(
         separated_pair(tag("broadcaster"), spaced_separator("->"), outputs),
         |(name, outputs)| (name, Module::Broadcaster { outputs }),
     )(input)
 }
 
-pub(super) fn flip_flop(input: &str) -> IResult<&str, (&str, Module)> {
+pub(super) fn flip_flop(input: &str) -> IResult<&str, (&str, Module<'_>)> {
     map(
         separated_pair(
             preceded(complete::char('%'), alpha1),
@@ -46,7 +46,7 @@ pub(super) fn flip_flop(input: &str) -> IResult<&str, (&str, Module)> {
     )(input)
 }
 
-pub(super) fn conjunction(input: &str) -> IResult<&str, (&str, Module)> {
+pub(super) fn conjunction(input: &str) -> IResult<&str, (&str, Module<'_>)> {
     map(
         separated_pair(
             preceded(complete::char('&'), alpha1),
@@ -65,11 +65,11 @@ pub(super) fn conjunction(input: &str) -> IResult<&str, (&str, Module)> {
     )(input)
 }
 
-pub(super) fn module(input: &str) -> IResult<&str, (&str, Module)> {
+pub(super) fn module(input: &str) -> IResult<&str, (&str, Module<'_>)> {
     alt((broadcaster, flip_flop, conjunction))(input)
 }
 
-pub(super) fn parse_system(input: &str) -> IResult<&str, System> {
+pub(super) fn parse_system(input: &str) -> IResult<&str, System<'_>> {
     let system_parser = separated_list0(line_ending, module)
         .map(|v| v.into_iter().collect::<HashMap<&str, Module>>())
         .map(System::new);

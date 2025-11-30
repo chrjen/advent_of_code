@@ -11,18 +11,13 @@ mod parse;
 type Coord = (usize, usize);
 type NodeID = (Coord, Dir, u32);
 
-#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
+#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy, Default)]
 enum Dir {
+    #[default]
     North,
     West,
     South,
     East,
-}
-
-impl Default for Dir {
-    fn default() -> Self {
-        Self::North
-    }
 }
 
 impl Dir {

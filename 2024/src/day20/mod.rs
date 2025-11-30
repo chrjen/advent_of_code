@@ -81,12 +81,11 @@ pub fn solve_(input: &[u8], p1_threshold: u32, p2_threshold: u32) -> (String, St
             let mut count = 0;
             for offset in cheat_offsets {
                 let neighbour = current + offset;
-                if let Some(&other_distance) = distances.get(&neighbour) {
-                    if other_distance > (distance + 2)
-                        && other_distance - (distance + 2) >= p1_threshold
-                    {
-                        count += 1;
-                    }
+                if let Some(&other_distance) = distances.get(&neighbour)
+                    && other_distance > (distance + 2)
+                    && other_distance - (distance + 2) >= p1_threshold
+                {
+                    count += 1;
                 }
             }
             count
@@ -112,12 +111,11 @@ pub fn solve_(input: &[u8], p1_threshold: u32, p2_threshold: u32) -> (String, St
             let mut count = 0;
             for (cheat_distance, offset) in cheat_offsets.iter() {
                 let neighbour = current + offset;
-                if let Some(&other_distance) = distances.get(&neighbour) {
-                    if other_distance > (distance + cheat_distance)
-                        && other_distance - (distance + cheat_distance) >= p2_threshold
-                    {
-                        count += 1;
-                    }
+                if let Some(&other_distance) = distances.get(&neighbour)
+                    && other_distance > (distance + cheat_distance)
+                    && other_distance - (distance + cheat_distance) >= p2_threshold
+                {
+                    count += 1;
                 }
             }
             count

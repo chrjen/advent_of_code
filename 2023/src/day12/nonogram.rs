@@ -39,7 +39,7 @@ impl Row {
         let mut hints = self.hints.clone();
 
         if hints.is_empty() {
-            if self.tiles.iter().any(|tile| *tile == Tile::Fill) {
+            if self.tiles.contains(&Tile::Fill) {
                 return 0;
             } else {
                 return 1;

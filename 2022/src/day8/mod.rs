@@ -21,7 +21,7 @@ pub fn solve(input: &[u8]) -> (String, String) {
     let width = input.lines().next().unwrap().len();
     let height = grid.len() / width;
 
-    if grid.len() % width != 0 {
+    if !grid.len().is_multiple_of(width) {
         panic!(
             "grid is not a perfect rectangle got {}x{} grid, but {} trees",
             width,

@@ -121,7 +121,7 @@ impl Grid {
         count
     }
 
-    fn iter(&self) -> GridIter {
+    fn iter(&self) -> GridIter<'_> {
         GridIter {
             grid: self,
             idx: 0,
