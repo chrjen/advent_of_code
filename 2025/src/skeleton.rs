@@ -5,6 +5,8 @@ pub enum Output {
     UInt(u128),
     Int(i128),
     String(Box<str>),
+    NoSolution,
+    Todo,
 }
 
 impl From<u128> for Output {
@@ -91,6 +93,8 @@ impl Display for Output {
             Output::UInt(x) => write!(f, "{}", x),
             Output::Int(x) => write!(f, "{}", x),
             Output::String(x) => write!(f, "{}", x),
+            Output::NoSolution => write!(f, "No solution"),
+            Output::Todo => write!(f, "!todo"),
         }
     }
 }

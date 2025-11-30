@@ -1,9 +1,8 @@
-pub mod skeleton;
-
 use serde_json::Value;
 use skeleton::{PartSolver, Solver};
 
 use crate::day1::skeleton::Output;
+use crate::skeleton;
 
 pub struct Solution;
 
@@ -102,7 +101,7 @@ mod tests {
     fn p1_example_1() {
         println!("input: {}", "1abc2");
         let result = Solution::initial(str::as_bytes("1abc2")).part1();
-        assert_eq!(result, Output::from("142"));
+        assert_eq!(result, Output::from(142));
     }
 
     #[test]
