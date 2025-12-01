@@ -7,4 +7,6 @@
 /output
 
 # Ignore VSCode specific settings and other info.
-.vscode/
+# Except certain code snippets.
+/.vscode/*
+!/.vscode/nom.code-snippets
