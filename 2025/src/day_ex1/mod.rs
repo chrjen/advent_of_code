@@ -1,3 +1,4 @@
+#![allow(unused)]
 use serde_json::Value;
 
 use common_v2::prelude::*;

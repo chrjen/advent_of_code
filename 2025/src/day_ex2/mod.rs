@@ -1,3 +1,4 @@
+#![allow(unused)]
 use miette::{Diagnostic, NamedSource, Result, SourceSpan};
 use std::fmt;
 
