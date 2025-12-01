@@ -1,5 +1,5 @@
-mod day1;
-mod day2;
+mod day_ex1;
+mod day_ex2;
 
 use common_v2::prelude::*;
 
@@ -20,8 +20,8 @@ pub enum DataStoreError {
 }
 
 fn main() -> Result<()> {
-    println!("{}", day1::Solution::title());
-    let parts = day1::Solution::initial(day1::Solution::input());
+    println!("{}", day_ex1::Solution::title());
+    let parts = day_ex1::Solution::initial(day_ex1::Solution::input());
 
     println!("Part 1: {}", parts.part1());
     println!("Part 2: {}", parts.part2());
@@ -37,6 +37,6 @@ fn main() -> Result<()> {
 
     foo().report();
 
-    Err(day2::run().unwrap_err())?;
+    Err(day_ex2::run().unwrap_err())?;
     Ok(())
 }
