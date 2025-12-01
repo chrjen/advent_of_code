@@ -1,3 +1,4 @@
+mod day1;
 mod day_ex1;
 mod day_ex2;
 
